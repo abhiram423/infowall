@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Join the Adventure – InfoWall</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    /* ═══════════════════════════════════════════
+        DESIGN SYSTEM (Matched to Index)
+    ═══════════════════════════════════════════ */
+    :root{
+      --cream:#FFFEF7; --cream2:#F7F9F0;
+      --green:#34C759; --green-d:#1A7A3D; --green-l:#E8F5E9;
+      --yellow:#FFD166; --yellow-d:#F5A623;
+      --blue:#4FC3F7;  --blue-d:#0288D1;
+      --dark:#1A2332;  --gray:#64748B; --border:#E8F0E8;
+      --fh:'Fredoka One',cursive; --fb:'Nunito',sans-serif;
+      --sh-lg:0 20px 60px rgba(0,0,0,.14);
+    }
+    body{font-family:var(--fb);background:var(--cream);color:var(--dark);overflow-x:hidden}
+
+    /* ═══ NAVBAR ═══ */
+    .navbar{ background:rgba(255,254,247,.92); backdrop-filter:blur(18px); border-bottom:1px solid rgba(52,199,89,.1); padding:14px 0; position:sticky; top:0; z-index:1000; }
+    .nav-brand{font-family:var(--fh); font-size:1.8rem; text-decoration:none; letter-spacing:1px; font-weight:800}
+    
+    .btn-nav-login-special {
+      background: #fff; border: 2px solid var(--green); color: var(--green-d);
+      border-radius: 50px; padding: 10px 28px; font-weight: 800; font-size: .95rem;
+      text-decoration: none; transition: all .3s; display: inline-flex; align-items: center; gap: 8px;
+      box-shadow: 0 4px 12px rgba(52,199,89,0.15);
+    }
+    .btn-nav-login-special:hover { background: var(--green); color: #fff; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(52,199,89,0.3); }
+    .btn-nav-cart{
+      position:relative;display:inline-flex;align-items:center;justify-content:center;
+      width:42px;height:42px;border-radius:50%;border:2px solid rgba(52,199,89,.25);
+      color:#4B5563;font-size:1.15rem;text-decoration:none;transition:all .25s;background:#fff;
+    }
+    .btn-nav-cart:hover{border-color:var(--green);color:var(--green-d);transform:translateY(-2px)}
+    .cart-badge{
+      position:absolute;top:-4px;right:-4px;
+      background:var(--green);color:#fff;font-size:.6rem;font-weight:900;
+      width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+      border:2px solid #fff;line-height:1;
+    }
+
+    .nav-link-custom {
+      font-family: var(--fb); font-weight: 800; font-size: 0.92rem;
+      color: #4B5563; padding: 8px 14px; border-radius: 10px;
+      text-decoration: none; transition: all 0.2s; display: block;
+    }
+    .nav-link-custom:hover { background: var(--green-l); color: var(--green-d); }
+
+    /* ═══ REGISTRATION SECTION ═══ */
+    #registration { padding: 80px 0; min-height: 90vh; position: relative; }
+    .reg-card {
+      background: #fff; border-radius: 40px; overflow: hidden;
+      box-shadow: var(--sh-lg); border: 1.5px solid var(--border);
+      display: flex; flex-wrap: wrap; min-height: 700px;
+    }
+
+    /* Left Visual Side */
+    .reg-visual-side {
+      flex: 1; min-width: 450px; background: linear-gradient(160deg, #F0FBF1 0%, #FFF8E1 100%);
+      padding: 60px; display: flex; flex-direction: column; align-items: center; 
+      justify-content: center; text-align: center; position: relative;
+    }
+    .visual-circle {
+      width: 300px; height: 300px; border-radius: 50%; border: 2px dashed rgba(52,199,89,0.2);
+      position: absolute; animation: rotate 20s linear infinite;
+    }
+    @keyframes rotate { from {transform: rotate(0deg)} to {transform: rotate(360deg)} }
+
+    .floating-fcard {
+      width: 160px; height: 210px; border-radius: 24px;
+      background: linear-gradient(135deg, var(--green), var(--green-d));
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15); animation: float 5s ease-in-out infinite;
+      z-index: 5;
+    }
+    @keyframes float { 0%, 100% {transform: translateY(0) rotate(-4deg)} 50% {transform: translateY(-25px) rotate(4deg)} }
+
+    .reg-visual-side h2 { font-family: var(--fh); font-size: 2.8rem; margin-top: 30px; color: var(--dark); line-height: 1.1; }
+    .reg-visual-side p { color: var(--gray); font-size: 1.1rem; max-width: 350px; margin: 15px 0; }
+
+    /* Right Form Side */
+    .reg-form-side { flex: 1.2; padding: 60px; background: #fff; min-width: 350px; }
+    .form-title { font-family: var(--fh); font-size: 2.2rem; margin-bottom: 8px; color: var(--dark); }
+    .form-subtitle { color: var(--gray); margin-bottom: 35px; font-weight: 600; }
+    
+    .label-custom { font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-l); margin-bottom: 8px; display: block; }
+    .field-wrap { position: relative; }
+    .field-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); font-size: 1.05rem; color: var(--gray); pointer-events: none; z-index: 1; }
+    .input-custom {
+      border-radius: 18px; border: 2px solid var(--border); padding: 15px 20px 15px 46px;
+      font-weight: 700; transition: all 0.3s; width: 100%; background: #fff; display: block;
+    }
+    .input-custom:focus { border-color: var(--green); outline: none; box-shadow: 0 0 0 5px rgba(52,199,89,0.1); }
+
+    .btn-submit-big {
+      background: linear-gradient(135deg, var(--green), var(--green-d));
+      color: #fff; border: none; border-radius: 50px; padding: 16px;
+      width: 100%; font-family: var(--fh); font-size: 1.3rem; 
+      box-shadow: 0 8px 25px rgba(52,199,89,0.4); transition: all 0.3s;
+      margin-top: 20px; cursor: pointer;
+    }
+    .btn-submit-big:hover { transform: translateY(-4px); box-shadow: 0 12px 35px rgba(52,199,89,0.6); color: #fff; }
+
+    .login-link-box {
+      text-align: center; margin-top: 25px; padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .login-link-box p { font-weight: 700; color: var(--gray); }
+    .login-link-box a { color: var(--green-d); text-decoration: none; border-bottom: 2px solid transparent; transition: 0.2s; }
+    .login-link-box a:hover { border-bottom-color: var(--green); }
+
+    /* ═══ FOOTER ═══ */
+    footer{background:var(--dark);padding:60px 0 28px;color:rgba(255,255,255,.65)}
+    .footer-brand{font-family:var(--fh);font-size:1.6rem;color:#fff;margin-bottom:8px;font-weight:800}
+    .footer-tagline{font-size:.85rem;color:rgba(255,255,255,.45);margin-bottom:16px}
+    .footer-social{display:flex;gap:10px;margin-top:16px}
+    .fsoc{width:36px;height:36px;border-radius:12px;border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.55);font-size:.95rem;transition:all .2s;cursor:pointer;text-decoration:none}
+    .fsoc:hover{background:var(--green);border-color:var(--green);color:#fff}
+    .footer-col{font-family:var(--fh);font-size:.95rem;color:#fff;margin-bottom:16px}
+    .footer-link{display:block;color:rgba(255,255,255,.5);font-size:.85rem;font-weight:700;text-decoration:none;padding:4px 0;transition:color .2s}
+    .footer-link:hover{color:var(--green)}
+    .footer-bottom{border-top:1px solid rgba(255,255,255,.08);margin-top:40px;padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+    .footer-bottom p{font-size:.82rem;color:rgba(255,255,255,.4);margin:0}
+
+    @media (max-width: 991px) { .reg-visual-side { display: none; } .reg-form-side { padding: 40px 25px; min-width: unset; } }
+    @media (max-width: 480px) { .reg-form-side { padding: 28px 18px; } .reg-card { border-radius: 24px; } }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="nav-brand" href="{% url 'index' %}">
+      <span style="color:#1B5FAA">I</span><span style="color:#2AB5E8">N</span><span style="color:#3DBF6E">F</span><span style="color:#F05545">O</span><span style="color:#8A3AB9">W</span><span style="color:#F5C234">A</span><span style="color:#F57C22">L</span><span style="color:#8A3AB9">L</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#regNav" aria-controls="regNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="regNav">
+      <ul class="navbar-nav mx-auto gap-lg-1">
+        <li class="nav-item"><a class="nav-link-custom" href="{% url 'index' %}">Home</a></li>
+        <li class="nav-item"><a class="nav-link-custom" href="{% url 'shop' %}">Shop</a></li>
+        <li class="nav-item"><a class="nav-link-custom" href="{% url 'about' %}">About</a></li>
+        <li class="nav-item"><a class="nav-link-custom" href="{% url 'contact' %}">Contact</a></li>
+        <li class="nav-item"><a class="nav-link-custom" href="{% url 'services' %}">Services</a></li>
+      </ul>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <a class="btn-nav-cart" href="#">
+        <i class="bi bi-cart2"></i>
+        <span class="cart-badge">0</span>
+      </a>
+      <a class="btn-nav-login-special" href="{% url 'login' %}">
+        <i class="bi bi-box-arrow-in-right"></i>Login Here
+      </a>
+    </div>
+  </div>
+</nav>
+
+<section id="registration">
+  <div class="container">
+    <div class="reg-card">
+      
+      <!-- LEFT SIDE: ATTRACTIVE VISUAL -->
+      <div class="reg-visual-side">
+        <div class="visual-circle"></div>
+        <div class="floating-fcard">
+          <span style="font-size: 4.5rem; line-height:1;">🚀</span>
+          <div style="color:white; font-family:var(--fh); font-size: 1.5rem; margin-top:10px;">LEVEL UP</div>
+        </div>
+        <h2>Unlock the <br><span class="grad-green" style="background: linear-gradient(135deg,var(--green),var(--green-d));-webkit-background-clip: text;background-clip: text;-webkit-text-fill-color: transparent;">Magic</span> of Learning</h2>
+        <p>Join thousands of parents helping their little ones grow big and bold through fun adventures.</p>
+        
+        <div class="mt-4 d-flex gap-3 justify-content-center">
+            <div class="small fw-bold text-muted"><i class="bi bi-shield-check text-success"></i> Secure</div>
+            <div class="small fw-bold text-muted"><i class="bi bi-star-fill text-warning"></i> 5-Star Rated</div>
+        </div>
+      </div>
+
+      <!-- RIGHT SIDE: THE FORM -->
+      <div class="reg-form-side">
+        <h1 class="form-title">Create Account</h1>
+        <p class="form-subtitle">It only takes a minute to start the journey!</p>
+
+
+        <form action="{% url 'register' %}" method="POST">
+            {% csrf_token %}
+            <div class="row g-4">
+                
+                <!-- Username -->
+                <div class="col-12">
+                  <label class="label-custom"><i class="bi bi-person-circle me-1"></i> Child's Name or Username</label>
+                  <div class="field-wrap">
+                    <i class="bi bi-person-fill field-icon text-success"></i>
+                    <input type="text" name="username" class="input-custom" placeholder="e.g. BraveLion123" required>
+                  </div>
+                </div>
+
+                <!-- Email -->
+                <div class="col-12">
+                  <label class="label-custom"><i class="bi bi-envelope-at-fill me-1"></i> Parent's Email Address</label>
+                  <div class="field-wrap">
+                    <i class="bi bi-envelope-fill field-icon text-primary"></i>
+                    <input type="email" name="email" class="input-custom" placeholder="you@example.com" required>
+                  </div>
+                </div>
+
+                <!-- Country Code -->
+                <div class="col-md-5">
+                  <label class="label-custom"><i class="bi bi-globe me-1"></i> Country Code</label>
+                  <div class="field-wrap">
+                    <i class="bi bi-flag-fill field-icon" style="color:var(--green-d)"></i>
+                    <select name="country_code" class="input-custom" id="globalCodes" style="appearance:none;cursor:pointer">
+                    <!-- JS fills this -->
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Phone -->
+                <div class="col-md-7">
+                  <label class="label-custom"><i class="bi bi-telephone-fill me-1"></i> Mobile Number</label>
+                  <div class="field-wrap">
+                    <i class="bi bi-phone-fill field-icon" style="color:var(--blue-d)"></i>
+                    <input type="text" name="phone" class="input-custom" placeholder="Phone Number" required>
+                  </div>
+                </div>
+
+                <!-- Password -->
+                <div class="col-md-6">
+                  <label class="label-custom"><i class="bi bi-lock-fill me-1"></i> Password</label>
+                  <div class="field-wrap">
+                    <i class="bi bi-key-fill field-icon text-warning"></i>
+                    <input type="password" name="password" class="input-custom" placeholder="••••••••" required>
+                  </div>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="col-md-6">
+                  <label class="label-custom"><i class="bi bi-shield-lock-fill me-1"></i> Confirm Password</label>
+                  <div class="field-wrap">
+                    <i class="bi bi-check2-shield field-icon text-success"></i>
+                    <input type="password" name="confirm_password" class="input-custom" placeholder="••••••••" required>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                <button type="submit" class="btn-submit-big">Register 🎉</button>
+                
+                <div class="login-link-box">
+                    <p class="fw-bold text-muted">Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+                </div>
+                </div>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <div class="footer-brand">
+          <span style="color:#1B5FAA">I</span><span style="color:#2AB5E8">N</span><span style="color:#3DBF6E">F</span><span style="color:#F05545">O</span><span style="color:#8A3AB9">W</span><span style="color:#F5C234">A</span><span style="color:#F57C22">L</span><span style="color:#8A3AB9">L</span>
+        </div>
+        <div class="footer-tagline">Where little minds grow big &amp; bold.<br>Premium learning for ages 2–8.</div>
+        <div class="footer-social">
+          <a class="fsoc" href="https://wa.me/917989869258" target="_blank" rel="noopener noreferrer"><i class="bi bi-whatsapp"></i></a>
+          <a class="fsoc" href="https://www.instagram.com/infowallflashcards?utm_source=qr&igsh=MTN4ZjdkOHZ3M2szNw==" target="_blank" rel="noopener noreferrer"><i class="bi bi-instagram"></i></a>
+          <a class="fsoc" href="https://www.facebook.com/share/1DVbhN19EZ/" target="_blank" rel="noopener noreferrer"><i class="bi bi-facebook"></i></a>
+          <a class="fsoc" href="#"><i class="bi bi-youtube"></i></a>
+          <a class="fsoc" href="#"><i class="bi bi-twitter-x"></i></a>
+        </div>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6 class="footer-col">Home</h6>
+        <a class="footer-link" href="{% url 'index' %}">Home</a>
+        <a class="footer-link" href="{% url 'index' %}#categories">Categories</a>
+        <a class="footer-link" href="{% url 'about' %}">About</a>
+        <a class="footer-link" href="{% url 'contact' %}">Contact</a>
+        <a class="footer-link" href="{% url 'services' %}">Support</a>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6 class="footer-col">Account</h6>
+        <a class="footer-link" href="{% url 'register' %}">Register</a>
+        <a class="footer-link" href="{% url 'login' %}">Login</a>
+        <a class="footer-link" href="{% url 'dashboard' %}">Dashboard</a>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6 class="footer-col">Flashcards</h6>
+        <a class="footer-link" href="{% url 'flashcards' %}">Flash Cards</a>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6 class="footer-col">Company</h6>
+        <a class="footer-link" href="{% url 'services' %}">Services</a>
+        <a class="footer-link" href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms &amp; Conditions</a>
+        <a class="footer-link" href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy Policy</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p style="text-align:center;width:100%">© 2026 InfoWall. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // All 195 Countries (193 UN members + Vatican City + Palestine)
+  const countryList = [
+    {n:"Afghanistan",c:"+93"},{n:"Albania",c:"+355"},{n:"Algeria",c:"+213"},{n:"Andorra",c:"+376"},{n:"Angola",c:"+244"},
+    {n:"Antigua and Barbuda",c:"+1268"},{n:"Argentina",c:"+54"},{n:"Armenia",c:"+374"},{n:"Australia",c:"+61"},{n:"Austria",c:"+43"},
+    {n:"Azerbaijan",c:"+994"},{n:"Bahamas",c:"+1242"},{n:"Bahrain",c:"+973"},{n:"Bangladesh",c:"+880"},{n:"Barbados",c:"+1246"},
+    {n:"Belarus",c:"+375"},{n:"Belgium",c:"+32"},{n:"Belize",c:"+501"},{n:"Benin",c:"+229"},{n:"Bhutan",c:"+975"},
+    {n:"Bolivia",c:"+591"},{n:"Bosnia and Herzegovina",c:"+387"},{n:"Botswana",c:"+267"},{n:"Brazil",c:"+55"},{n:"Brunei",c:"+673"},
+    {n:"Bulgaria",c:"+359"},{n:"Burkina Faso",c:"+226"},{n:"Burundi",c:"+257"},{n:"Cabo Verde",c:"+238"},{n:"Cambodia",c:"+855"},
+    {n:"Cameroon",c:"+237"},{n:"Canada",c:"+1"},{n:"Central African Republic",c:"+236"},{n:"Chad",c:"+235"},{n:"Chile",c:"+56"},
+    {n:"China",c:"+86"},{n:"Colombia",c:"+57"},{n:"Comoros",c:"+269"},{n:"Congo (Republic)",c:"+242"},{n:"Congo (DR)",c:"+243"},
+    {n:"Costa Rica",c:"+506"},{n:"Côte d'Ivoire",c:"+225"},{n:"Croatia",c:"+385"},{n:"Cuba",c:"+53"},{n:"Cyprus",c:"+357"},
+    {n:"Czech Republic",c:"+420"},{n:"Denmark",c:"+45"},{n:"Djibouti",c:"+253"},{n:"Dominica",c:"+1767"},{n:"Dominican Republic",c:"+1809"},
+    {n:"Ecuador",c:"+593"},{n:"Egypt",c:"+20"},{n:"El Salvador",c:"+503"},{n:"Equatorial Guinea",c:"+240"},{n:"Eritrea",c:"+291"},
+    {n:"Estonia",c:"+372"},{n:"Eswatini",c:"+268"},{n:"Ethiopia",c:"+251"},{n:"Fiji",c:"+679"},{n:"Finland",c:"+358"},
+    {n:"France",c:"+33"},{n:"Gabon",c:"+241"},{n:"Gambia",c:"+220"},{n:"Georgia",c:"+995"},{n:"Germany",c:"+49"},
+    {n:"Ghana",c:"+233"},{n:"Greece",c:"+30"},{n:"Grenada",c:"+1473"},{n:"Guatemala",c:"+502"},{n:"Guinea",c:"+224"},
+    {n:"Guinea-Bissau",c:"+245"},{n:"Guyana",c:"+592"},{n:"Haiti",c:"+509"},{n:"Honduras",c:"+504"},{n:"Hungary",c:"+36"},
+    {n:"Iceland",c:"+354"},{n:"India",c:"+91"},{n:"Indonesia",c:"+62"},{n:"Iran",c:"+98"},{n:"Iraq",c:"+964"},
+    {n:"Ireland",c:"+353"},{n:"Israel",c:"+972"},{n:"Italy",c:"+39"},{n:"Jamaica",c:"+1876"},{n:"Japan",c:"+81"},
+    {n:"Jordan",c:"+962"},{n:"Kazakhstan",c:"+7"},{n:"Kenya",c:"+254"},{n:"Kiribati",c:"+686"},{n:"Kuwait",c:"+965"},
+    {n:"Kyrgyzstan",c:"+996"},{n:"Laos",c:"+856"},{n:"Latvia",c:"+371"},{n:"Lebanon",c:"+961"},{n:"Lesotho",c:"+266"},
+    {n:"Liberia",c:"+231"},{n:"Libya",c:"+218"},{n:"Liechtenstein",c:"+423"},{n:"Lithuania",c:"+370"},{n:"Luxembourg",c:"+352"},
+    {n:"Madagascar",c:"+261"},{n:"Malawi",c:"+265"},{n:"Malaysia",c:"+60"},{n:"Maldives",c:"+960"},{n:"Mali",c:"+223"},
+    {n:"Malta",c:"+356"},{n:"Marshall Islands",c:"+692"},{n:"Mauritania",c:"+222"},{n:"Mauritius",c:"+230"},{n:"Mexico",c:"+52"},
+    {n:"Micronesia",c:"+691"},{n:"Moldova",c:"+373"},{n:"Monaco",c:"+377"},{n:"Mongolia",c:"+976"},{n:"Montenegro",c:"+382"},
+    {n:"Morocco",c:"+212"},{n:"Mozambique",c:"+258"},{n:"Myanmar",c:"+95"},{n:"Namibia",c:"+264"},{n:"Nauru",c:"+674"},
+    {n:"Nepal",c:"+977"},{n:"Netherlands",c:"+31"},{n:"New Zealand",c:"+64"},{n:"Nicaragua",c:"+505"},{n:"Niger",c:"+227"},
+    {n:"Nigeria",c:"+234"},{n:"North Korea",c:"+850"},{n:"North Macedonia",c:"+389"},{n:"Norway",c:"+47"},{n:"Oman",c:"+968"},
+    {n:"Pakistan",c:"+92"},{n:"Palau",c:"+680"},{n:"Palestine",c:"+970"},{n:"Panama",c:"+507"},{n:"Papua New Guinea",c:"+675"},
+    {n:"Paraguay",c:"+595"},{n:"Peru",c:"+51"},{n:"Philippines",c:"+63"},{n:"Poland",c:"+48"},{n:"Portugal",c:"+351"},
+    {n:"Qatar",c:"+974"},{n:"Romania",c:"+40"},{n:"Russia",c:"+7"},{n:"Rwanda",c:"+250"},{n:"Saint Kitts and Nevis",c:"+1869"},
+    {n:"Saint Lucia",c:"+1758"},{n:"Saint Vincent and the Grenadines",c:"+1784"},{n:"Samoa",c:"+685"},{n:"San Marino",c:"+378"},{n:"São Tomé and Príncipe",c:"+239"},
+    {n:"Saudi Arabia",c:"+966"},{n:"Senegal",c:"+221"},{n:"Serbia",c:"+381"},{n:"Seychelles",c:"+248"},{n:"Sierra Leone",c:"+232"},
+    {n:"Singapore",c:"+65"},{n:"Slovakia",c:"+421"},{n:"Slovenia",c:"+386"},{n:"Solomon Islands",c:"+677"},{n:"Somalia",c:"+252"},
+    {n:"South Africa",c:"+27"},{n:"South Korea",c:"+82"},{n:"South Sudan",c:"+211"},{n:"Spain",c:"+34"},{n:"Sri Lanka",c:"+94"},
+    {n:"Sudan",c:"+249"},{n:"Suriname",c:"+597"},{n:"Sweden",c:"+46"},{n:"Switzerland",c:"+41"},{n:"Syria",c:"+963"},
+    {n:"Tajikistan",c:"+992"},{n:"Tanzania",c:"+255"},{n:"Thailand",c:"+66"},{n:"Timor-Leste",c:"+670"},{n:"Togo",c:"+228"},
+    {n:"Tonga",c:"+676"},{n:"Trinidad and Tobago",c:"+1868"},{n:"Tunisia",c:"+216"},{n:"Turkey",c:"+90"},{n:"Turkmenistan",c:"+993"},
+    {n:"Tuvalu",c:"+688"},{n:"Uganda",c:"+256"},{n:"Ukraine",c:"+380"},{n:"United Arab Emirates",c:"+971"},{n:"United Kingdom",c:"+44"},
+    {n:"United States",c:"+1"},{n:"Uruguay",c:"+598"},{n:"Uzbekistan",c:"+998"},{n:"Vanuatu",c:"+678"},{n:"Vatican City",c:"+379"},
+    {n:"Venezuela",c:"+58"},{n:"Vietnam",c:"+84"},{n:"Yemen",c:"+967"},{n:"Zambia",c:"+260"},{n:"Zimbabwe",c:"+263"},
+  ];
+
+  const select = document.getElementById('globalCodes');
+  // Sorting alphabetically
+  countryList.sort((a, b) => a.n.localeCompare(b.n));
+  
+  countryList.forEach(item => {
+    let opt = document.createElement('option');
+    opt.value = item.c;
+    opt.text = `${item.c} - ${item.n}`;
+    if(item.n === "India") opt.selected = true;
+    select.add(opt);
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% if messages %}<script type="application/json" id="iw-msgs">
+[{% for message in messages %}{"text":"{{ message|escapejs }}","tag":"{{ message.tags }}"}{% if not forloop.last %},{% endif %}{% endfor %}]
+</script>{% endif %}
+<script>
+(function(){
+  var el = document.getElementById('iw-msgs');
+  if(!el) return;
+  var msgs = JSON.parse(el.textContent);
+  function icon(tag){
+    if(tag.indexOf('error')>=0)   return 'error';
+    if(tag.indexOf('success')>=0) return 'success';
+    if(tag.indexOf('warning')>=0) return 'warning';
+    return 'error';
+  }
+  (async function(){
+    for(var i=0;i<msgs.length;i++){
+      await Swal.fire({
+        html: msgs[i].text,
+        icon: icon(msgs[i].tag),
+        confirmButtonText: 'Got it!',
+        confirmButtonColor: '#34C759',
+        customClass: { popup: 'rounded-5', confirmButton: 'fw-bold px-4' },
+        buttonsStyling: true
+      });
+    }
+  })();
+})();
+</script>
+<!-- ═══ PRIVACY POLICY MODAL ═══ -->
+<div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+    <div class="modal-content" style="border-radius:28px;overflow:hidden;font-family:'Nunito',sans-serif">
+      <div class="modal-header" style="background:linear-gradient(135deg,#E1F5FE,#F0FBF1);border-bottom:1.5px solid #E8F0E8;padding:20px 28px">
+        <h5 class="modal-title" id="privacyModalLabel" style="font-family:'Fredoka One',cursive;font-size:1.5rem;color:#1A2332">🔒 Privacy Policy</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="padding:28px 32px;color:#1A2332;font-size:.95rem;line-height:1.85">
+        <p style="background:#F0FBF1;border-radius:12px;padding:10px 16px;font-size:.82rem;color:#1A7A3D;font-weight:700;margin-bottom:24px">📅 Effective Date: <span class="iw-eff-date"></span></p>
+        <p style="margin-bottom:16px">Welcome to <strong>InfoWall</strong>. We are committed to protecting your privacy and ensuring your personal information is handled securely and responsibly.</p>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#1A7A3D;margin:24px 0 10px">1. Information We Collect</h6>
+        <p style="margin-bottom:8px;font-weight:700;color:#1A2332;font-size:.9rem">Personal Information:</p>
+        <ul style="color:#64748B;padding-left:20px;margin-bottom:14px"><li>Full name, mobile number, email address</li><li>Billing and shipping address</li><li>Payment-related details</li><li>Business or school information (if applicable)</li></ul>
+        <p style="margin-bottom:8px;font-weight:700;color:#1A2332;font-size:.9rem">Non-Personal Information:</p>
+        <ul style="color:#64748B;padding-left:20px;margin-bottom:14px"><li>Browser type, device info, IP address</li><li>Operating system and usage statistics</li><li>Cookies and analytics data</li></ul>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#1A7A3D;margin:24px 0 10px">2. How We Use Your Information</h6>
+        <ul style="color:#64748B;padding-left:20px;margin-bottom:14px"><li>Process and fulfill orders</li><li>Provide customer support</li><li>Improve website functionality and user experience</li><li>Send transactional notifications and updates</li><li>Share promotional offers and educational content</li><li>Conduct analytics and prevent fraudulent activities</li></ul>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#1A7A3D;margin:24px 0 10px">3. Payment Information</h6>
+        <p style="color:#64748B;margin-bottom:14px">All payments are processed through secure third-party gateways. InfoWall does <strong>not</strong> store card numbers, CVV details, UPI PINs, or banking passwords.</p>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#1A7A3D;margin:24px 0 10px">4. Cookies &amp; Tracking</h6>
+        <p style="color:#64748B;margin-bottom:14px">We use cookies to enhance browsing, remember preferences, and analyze traffic. You may disable cookies through browser settings; however, some features may not function properly.</p>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#1A7A3D;margin:24px 0 10px">5. Sharing of Information</h6>
+        <ul style="color:#64748B;padding-left:20px;margin-bottom:14px"><li>Shipping and logistics partners</li><li>Payment gateway providers</li><li>Website and technology service providers</li><li>Legal authorities when required by law</li></ul>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#1A7A3D;margin:24px 0 10px">6. Data Security</h6>
+        <p style="color:#64748B;margin-bottom:14px">We implement commercially reasonable security measures against unauthorized access, misuse, loss, or disclosure.</p>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#1A7A3D;margin:24px 0 10px">7. Children's Privacy</h6>
+        <p style="color:#64748B;margin-bottom:14px">InfoWall products are designed for children under parental or institutional supervision. We do not knowingly collect personal information directly from children.</p>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#1A7A3D;margin:24px 0 10px">8. User Rights</h6>
+        <ul style="color:#64748B;padding-left:20px;margin-bottom:14px"><li>Access to your personal information</li><li>Correction or updating of data</li><li>Deletion of personal information</li><li>Withdrawal of communication preferences</li></ul>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#1A7A3D;margin:24px 0 10px">9. Contact Us</h6>
+        <div style="background:#F0FBF1;border-radius:14px;padding:18px 22px;border:1px solid rgba(52,199,89,.2);margin-bottom:20px">
+          <p style="margin-bottom:4px;font-weight:800">InfoWall</p>
+          <p style="color:#64748B;font-size:.9rem;margin-bottom:4px">📧 <a href="mailto:support@infowall.in" style="color:#1A7A3D;text-decoration:none;font-weight:700">support@infowall.in</a></p>
+          <p style="color:#64748B;font-size:.9rem;margin:0">📱 <a href="https://instagram.com/infowall.in" target="_blank" style="color:#1A7A3D;text-decoration:none;font-weight:700">@infowall.in</a></p>
+        </div>
+        <p style="font-size:.78rem;color:#94A3B8;text-align:center;border-top:1px solid #E8F0E8;padding-top:16px;margin:0">© 2026 InfoWall. All Rights Reserved.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ═══ TERMS & CONDITIONS MODAL ═══ -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+    <div class="modal-content" style="border-radius:28px;overflow:hidden;font-family:'Nunito',sans-serif">
+      <div class="modal-header" style="background:linear-gradient(135deg,#FFF8E1,#FFF3E0);border-bottom:1.5px solid #E8F0E8;padding:20px 28px">
+        <h5 class="modal-title" id="termsModalLabel" style="font-family:'Fredoka One',cursive;font-size:1.5rem;color:#1A2332">📜 Terms &amp; Conditions</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="padding:28px 32px;color:#1A2332;font-size:.95rem;line-height:1.85">
+        <p style="background:#FFF8E1;border-radius:12px;padding:10px 16px;font-size:.82rem;color:#F5A623;font-weight:700;margin-bottom:24px">📅 Effective Date: <span class="iw-eff-date"></span></p>
+        <p style="margin-bottom:16px">Welcome to <strong>InfoWall</strong>. By accessing or using our website, purchasing our products, or interacting with our services, you agree to be bound by these Terms &amp; Conditions.</p>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#F5A623;margin:24px 0 10px">1. Acceptance of Terms</h6>
+        <p style="color:#64748B;margin-bottom:14px">By using InfoWall, you confirm that you are at least 18 years old (or have parental/guardian consent) and agree to comply with these Terms and all applicable laws.</p>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#F5A623;margin:24px 0 10px">2. Account Registration</h6>
+        <ul style="color:#64748B;padding-left:20px;margin-bottom:14px"><li>Maintain confidentiality of your account credentials</li><li>Provide accurate and complete registration information</li><li>You are responsible for all activities under your account</li><li>Notify us immediately of any unauthorized use</li></ul>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#F5A623;margin:24px 0 10px">3. Products and Orders</h6>
+        <ul style="color:#64748B;padding-left:20px;margin-bottom:14px"><li>All product descriptions and prices are subject to change</li><li>We reserve the right to refuse or cancel any order</li><li>Orders are confirmed only after successful payment verification</li></ul>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#F5A623;margin:24px 0 10px">4. Pricing and Payment</h6>
+        <ul style="color:#64748B;padding-left:20px;margin-bottom:14px"><li>All prices are listed in Indian Rupees (INR) including applicable taxes</li><li>Payments are processed through secure third-party gateways</li><li>InfoWall does not store sensitive payment information</li></ul>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#F5A623;margin:24px 0 10px">5. Returns and Refunds</h6>
+        <ul style="color:#64748B;padding-left:20px;margin-bottom:14px"><li>Returns accepted within 7 days for damaged or defective items</li><li>Items must be unused, in original packaging, with proof of purchase</li><li>Refunds processed within 7–10 business days after approval</li><li>Digital products and customized items are non-refundable</li></ul>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#F5A623;margin:24px 0 10px">6. Intellectual Property</h6>
+        <p style="color:#64748B;margin-bottom:14px">All content on InfoWall — product designs, visuals, educational materials, and branding — is the intellectual property of InfoWall. Unauthorized reproduction without written permission is strictly prohibited.</p>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#F5A623;margin:24px 0 10px">7. Children's Safety</h6>
+        <p style="color:#64748B;margin-bottom:14px">Our products are designed for children aged 2–8 under adult supervision. Parents are responsible for ensuring appropriate use of InfoWall materials.</p>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#F5A623;margin:24px 0 10px">8. Contact Us</h6>
+        <div style="background:#FFF8E1;border-radius:14px;padding:18px 22px;border:1px solid rgba(245,166,35,.2)">
+          <p style="margin-bottom:4px;font-weight:800">InfoWall</p>
+          <p style="color:#64748B;font-size:.9rem;margin-bottom:4px">📧 <a href="mailto:support@infowall.in" style="color:#F5A623;text-decoration:none;font-weight:700">support@infowall.in</a></p>
+          <p style="color:#64748B;font-size:.9rem;margin:0">📱 <a href="https://instagram.com/infowall.in" target="_blank" style="color:#F5A623;text-decoration:none;font-weight:700">@infowall.in</a></p>
+        </div>
+      </div>
+      <div class="modal-footer" style="border-top:1.5px solid #E8F0E8;padding:20px 32px;flex-direction:column;align-items:stretch;gap:12px">
+        <label style="display:flex;align-items:center;gap:12px;background:#FFF8E1;border:1.5px solid rgba(245,166,35,.35);border-radius:14px;padding:14px 18px;cursor:pointer;margin:0">
+          <input type="radio" name="iw-terms-agree" id="iw-terms-radio" style="width:20px;height:20px;accent-color:#F5A623;cursor:pointer;flex-shrink:0">
+          <span style="font-family:'Nunito',sans-serif;font-weight:800;font-size:.95rem;color:#1A2332">I have read and agree to the Terms &amp; Conditions <span style="color:#F05545">*</span></span>
+        </label>
+        <button type="button" id="iw-terms-accept" disabled style="background:linear-gradient(135deg,#34C759,#1A7A3D);color:#fff;border:none;border-radius:50px;padding:14px;font-family:'Fredoka One',cursive;font-size:1.1rem;width:100%;opacity:.4;cursor:not-allowed;transition:all .3s;box-shadow:none">Accept Terms &amp; Conditions ✓</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+document.querySelectorAll('.iw-eff-date').forEach(function(e){e.textContent=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});});
+(function(){
+  var r=document.getElementById('iw-terms-radio'),b=document.getElementById('iw-terms-accept');
+  if(!r||!b)return;
+  r.addEventListener('change',function(){
+    b.disabled=!this.checked;
+    b.style.opacity=this.checked?'1':'.4';
+    b.style.cursor=this.checked?'pointer':'not-allowed';
+    b.style.boxShadow=this.checked?'0 8px 25px rgba(52,199,89,.35)':'none';
+  });
+  b.addEventListener('click',function(){
+    if(!r.checked)return;
+    var m=bootstrap.Modal.getInstance(document.getElementById('termsModal'));
+    if(m)m.hide();
+  });
+})();
+</script>
+</body>
+</html>

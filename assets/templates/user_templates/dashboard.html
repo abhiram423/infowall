@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard – InfoWall</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --purple:  #7c3aed; --purple2: #a78bfa;
+      --pink:    #ec4899; --orange:  #f97316; 
+      --yellow:  #fbbf24; --teal:    #14b8a6;
+      --green:   #22c55e; --red:     #ef4444;
+      --blue:    #3b82f6;
+      --bg:      #f5f3ff;
+      --sidebar: #ffffff;
+      --font-h:  'Fredoka One', cursive;
+      --font-b:  'Nunito', sans-serif;
+    }
+    .extra-small {
+      font-size: 0.75rem;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-b); background: var(--bg); color: #1e1b4b; overflow-x: hidden; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      position: fixed; top: 0; left: 0; width: 240px; height: 100vh;
+      background: var(--sidebar);
+      border-right: 1px solid #ede9fe;
+      display: flex; flex-direction: column;
+      z-index: 200;
+      box-shadow: 4px 0 24px rgba(124,58,237,.07);
+      transition: transform .3s ease;
+    }
+    .sb-brand {
+      padding: 22px 24px 18px;
+      font-family: var(--font-h); font-size: 1.6rem;
+      letter-spacing: 1px; font-weight: 800;
+      border-bottom: 1px solid #ede9fe;
+    }
+    .sb-nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+    .sb-link {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 14px; border-radius: 14px;
+      font-weight: 800; font-size: .93rem; color: #64748b;
+      text-decoration: none; transition: all .2s; cursor: pointer;
+      border: none; background: none; width: 100%; text-align: left;
+    }
+    .sb-link:hover { background: #f5f3ff; color: var(--purple); }
+    .sb-link.active { background: linear-gradient(135deg,rgba(124,58,237,.12),rgba(236,72,153,.08));
+                      color: var(--purple); border: 1px solid rgba(124,58,237,.15); }
+    .sb-link i { font-size: 1.1rem; width: 22px; text-align: center; }
+    .sb-link .lbl { flex: 1; }
+    .sb-link .badge-pill {
+      background: linear-gradient(135deg,var(--purple),var(--pink));
+      color: #fff; font-size: .7rem; padding: 2px 8px; border-radius: 20px; font-weight: 900;
+    }
+    .sb-section { font-size: .68rem; font-weight: 900; color: #94a3b8;
+                  letter-spacing: 1.5px; text-transform: uppercase;
+                  padding: 14px 14px 6px; }
+    .sb-footer {
+      padding: 16px 16px 20px; border-top: 1px solid #ede9fe;
+    }
+    .sb-user {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 10px; border-radius: 14px;
+      background: #f5f3ff; cursor: pointer; transition: all .2s;
+    }
+    .sb-user:hover { background: #ede9fe; }
+    .sb-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: linear-gradient(135deg,var(--purple),var(--pink));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; color: #fff; font-weight: 900; flex-shrink: 0;
+    }
+    .sb-name { font-weight: 800; font-size: .9rem; color: #1e1b4b; }
+    .sb-role { font-size: .72rem; color: #94a3b8; font-weight: 700; }
+
+    /* ── MAIN ── */
+    .main-wrap {
+      margin-left: 240px;
+      min-height: 100vh;
+      transition: margin .3s ease;
+    }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      background: rgba(255,255,255,.85); backdrop-filter: blur(14px);
+      border-bottom: 1px solid #ede9fe;
+      padding: 14px 32px; display: flex; align-items: center;
+      justify-content: space-between; position: sticky; top: 0; z-index: 100;
+    }
+    .topbar-left h2 { font-family: var(--font-h); font-size: 1.4rem; color: #1e1b4b; }
+    .topbar-left p  { font-size: .83rem; color: #94a3b8; font-weight: 700; margin: 0; }
+    .topbar-right   { display: flex; align-items: center; gap: 12px; }
+    .topbar-icon {
+      width: 38px; height: 38px; border-radius: 12px; border: 1.5px solid #ede9fe;
+      background: #fff; display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; cursor: pointer; color: #64748b; transition: all .2s;
+    }
+    .topbar-icon:hover { background: #f5f3ff; color: var(--purple); border-color: #ddd6fe; }
+    .hamburger { display: none; }
+
+    /* ── PAGE CONTENT ── */
+    .page-content { padding: 28px 32px 48px; }
+
+    /* ── WELCOME BANNER ── */
+    .welcome-banner {
+      background: linear-gradient(135deg, #7c3aed 0%, #a855f7 40%, #ec4899 100%);
+      border-radius: 28px; padding: 32px 36px;
+      color: #fff; position: relative; overflow: hidden;
+      margin-bottom: 28px;
+      box-shadow: 0 12px 40px rgba(124,58,237,.3);
+    }
+    .wb-orb {
+      position: absolute; border-radius: 50%;
+      background: rgba(255,255,255,.1); pointer-events: none;
+    }
+    .wb-orb-1 { width:200px; height:200px; top:-60px; right:20px; }
+    .wb-orb-2 { width:140px; height:140px; bottom:-40px; right:180px; }
+    .wb-orb-3 { width:80px;  height:80px;  top:20px; right:240px; }
+    .welcome-banner h1 { font-family:var(--font-h); font-size:clamp(1.6rem,3vw,2.2rem); margin-bottom:6px; }
+    .welcome-banner p  { color:rgba(255,255,255,.8); font-size:.95rem; line-height:1.7; max-width:480px; margin-bottom:20px; }
+    .wb-pills { display:flex; flex-wrap:wrap; gap:8px; }
+    .wb-pill {
+      background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.3);
+      border-radius:50px; padding:5px 14px; font-size:.82rem; font-weight:800;
+    }
+    .wb-mascot { font-size: 5rem; position:absolute; right:36px; bottom:0; line-height:1; }
+
+    /* ── STAT CARDS ── */
+    .stat-card {
+      background: #fff; border-radius: 22px;
+      padding: 22px 20px; border: 1.5px solid #ede9fe;
+      box-shadow: 0 4px 20px rgba(0,0,0,.05);
+      transition: all .3s; cursor: default; position: relative; overflow: hidden;
+    }
+    .stat-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(0,0,0,.1); }
+    .stat-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    }
+    .sc-purple::before { background:linear-gradient(90deg,var(--purple),var(--purple2)); }
+    .sc-pink::before   { background:linear-gradient(90deg,var(--pink),var(--orange)); }
+    .sc-teal::before   { background:linear-gradient(90deg,var(--teal),var(--green)); }
+    .sc-yellow::before { background:linear-gradient(90deg,var(--yellow),var(--orange)); }
+    .stat-icon {
+      width:48px; height:48px; border-radius:14px;
+      display:flex; align-items:center; justify-content:center; font-size:1.4rem;
+      margin-bottom:14px;
+    }
+    .si-purple { background:rgba(124,58,237,.1);  border:1px solid rgba(124,58,237,.2); }
+    .si-pink   { background:rgba(236,72,153,.1);  border:1px solid rgba(236,72,153,.2); }
+    .si-teal   { background:rgba(20,184,166,.1);  border:1px solid rgba(20,184,166,.2); }
+    .si-yellow { background:rgba(251,191,36,.1);  border:1px solid rgba(251,191,36,.2); }
+    .stat-num  { font-family:var(--font-h); font-size:2.2rem; color:#1e1b4b; line-height:1; }
+    .stat-lbl  { font-size:.82rem; color:#94a3b8; font-weight:800; margin-top:4px; }
+    .stat-change { font-size:.78rem; font-weight:800; margin-top:8px; }
+    .up   { color:var(--green); }
+    .same { color:#94a3b8; }
+
+    /* ── PROGRESS SECTION ── */
+    .section-title-sm {
+      font-family: var(--font-h); font-size: 1.25rem;
+      color: #1e1b4b; margin-bottom: 18px;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    /* Category progress card */
+    .cat-prog-card {
+      background: #fff; border-radius: 20px;
+      padding: 20px 16px; border: 1.5px solid #ede9fe;
+      box-shadow: 0 4px 16px rgba(0,0,0,.04);
+      text-align: center; transition: all .3s;
+      position: relative; overflow: hidden;
+    }
+    .cat-prog-card:hover { transform: translateY(-6px); box-shadow: 0 14px 36px rgba(0,0,0,.1); }
+    .ring-wrap { position: relative; width: 100px; height: 100px; margin: 0 auto 14px; }
+    .ring-wrap canvas { position:absolute; top:0; left:0; }
+    .ring-label {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .ring-pct  { font-family: var(--font-h); font-size: 1.4rem; color: #1e1b4b; line-height: 1; }
+    .ring-done { font-size: .68rem; color: #94a3b8; font-weight: 800; }
+    .cat-prog-card .cat-name  { font-family: var(--font-h); font-size: 1rem; color: #1e1b4b; margin-bottom: 2px; }
+    .cat-prog-card .cat-count { font-size: .78rem; color: #94a3b8; font-weight: 700; }
+    .cat-prog-card .cat-btn {
+      display: inline-block; margin-top: 12px;
+      font-size: .78rem; font-weight: 800; padding: 5px 16px;
+      border-radius: 50px; text-decoration: none; transition: all .2s;
+      border: 1.5px solid; cursor: pointer; background: none;
+    }
+
+    /* ── DONUT CHART (radar) ── */
+    .chart-card {
+      background: #fff; border-radius: 22px;
+      padding: 24px; border: 1.5px solid #ede9fe;
+      box-shadow: 0 4px 20px rgba(0,0,0,.05);
+    }
+    .chart-title { font-family:var(--font-h); font-size:1.1rem; color:#1e1b4b; margin-bottom:4px; }
+    .chart-sub   { font-size:.8rem; color:#94a3b8; font-weight:700; margin-bottom:16px; }
+
+    /* ── ACHIEVEMENT BADGES ── */
+    .badge-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:14px; }
+    .badge-card {
+      background:#fff; border-radius:18px; padding:20px 12px;
+      text-align:center; border:1.5px solid #ede9fe;
+      box-shadow:0 4px 16px rgba(0,0,0,.04); transition:all .3s;
+      position:relative;
+    }
+    .badge-card:hover { transform:translateY(-5px); box-shadow:0 12px 32px rgba(0,0,0,.1); }
+    .badge-card.locked { opacity:.45; filter:grayscale(.7); }
+    .badge-ico { font-size:2.4rem; margin-bottom:8px; display:block; }
+    .badge-name { font-family:var(--font-h); font-size:.9rem; color:#1e1b4b; margin-bottom:2px; }
+    .badge-desc { font-size:.72rem; color:#94a3b8; font-weight:700; }
+    .badge-earned {
+      position:absolute; top:8px; right:8px;
+      background:var(--green); color:#fff; border-radius:50%;
+      width:18px; height:18px; display:flex; align-items:center;
+      justify-content:center; font-size:.6rem; font-weight:900;
+    }
+
+    /* ── RECENT ACTIVITY ── */
+    .activity-item {
+      display:flex; align-items:center; gap:14px;
+      padding:12px 0; border-bottom:1px solid #f1f5f9;
+    }
+    .activity-item:last-child { border:none; }
+    .act-ico {
+      width:40px; height:40px; border-radius:12px;
+      display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0;
+    }
+    .act-info { flex:1; }
+    .act-title { font-weight:800; font-size:.9rem; color:#1e1b4b; }
+    .act-time  { font-size:.75rem; color:#94a3b8; font-weight:700; margin-top:2px; }
+    .act-score { font-family:var(--font-h); font-size:1rem; color:var(--purple); }
+
+    /* ── QUICK START ── */
+    .quick-card {
+      background:#fff; border-radius:20px; padding:20px;
+      border:1.5px solid #ede9fe; box-shadow:0 4px 16px rgba(0,0,0,.04);
+      display:flex; align-items:center; gap:14px;
+      text-decoration:none; color:#1e1b4b; transition:all .3s;
+    }
+    .quick-card:hover { transform:translateY(-4px); box-shadow:0 12px 32px rgba(0,0,0,.1); color:#1e1b4b; border-color:var(--purple2); }
+    .quick-ico { font-size:2.2rem; flex-shrink:0; }
+    .quick-name { font-family:var(--font-h); font-size:1rem; margin-bottom:2px; }
+    .quick-sub  { font-size:.78rem; color:#94a3b8; font-weight:700; }
+    .quick-arrow { margin-left:auto; color:var(--purple2); font-size:1.1rem; }
+
+    /* ── MOTIVATIONAL ── */
+    .motiv-banner {
+      background: linear-gradient(135deg,#ecfdf5,#f0fdf4);
+      border: 1.5px solid #bbf7d0; border-radius:22px;
+      padding:24px 28px; display:flex; align-items:center; gap:20px;
+    }
+    .motiv-icon { font-size:3rem; }
+    .motiv-text h5 { font-family:var(--font-h); font-size:1.1rem; color:#065f46; margin-bottom:4px; }
+    .motiv-text p  { font-size:.88rem; color:#047857; margin:0; line-height:1.6; }
+
+    /* ── COUNTER ANIMATION ── */
+    @keyframes countUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+    .stat-num { animation: countUp .6s ease both; }
+
+    /* ── INLINE FLASHCARD STYLES ── */
+    .fc-mode-btn {
+      font-family: var(--font-b); font-weight: 800; font-size: .95rem;
+      padding: 10px 28px; border-radius: 50px; border: 2.5px solid transparent;
+      cursor: pointer; transition: all .3s; background: #f1f5f9; color: #64748b;
+    }
+    .fc-mode-btn.fc-active { background: #22c55e; color: #fff; border-color: #22c55e; box-shadow: 0 4px 18px rgba(34,197,94,.3); transform: translateY(-2px); }
+    .fc-cat-btn {
+      font-family: var(--font-b); font-weight: 700; font-size: .85rem;
+      padding: 7px 18px; border-radius: 50px; border: 2px solid #e2e8f0;
+      cursor: pointer; background: #f8fafc; color: #64748b; transition: all .3s;
+    }
+    .fc-cat-btn.fc-cat-active { background: #7c3aed; color: #fff; border-color: #7c3aed; transform: translateY(-2px); box-shadow: 0 4px 14px rgba(124,58,237,.3); }
+    .fc-cat-btn:not(.fc-cat-active):hover { transform: translateY(-1px); border-color: #94a3b8; }
+
+    /* Flip card */
+    .fc-wrap { perspective: 1000px; height: 210px; cursor: pointer; animation: fcPop .5s cubic-bezier(.36,.07,.19,.97) both; }
+    @keyframes fcPop {
+      0%   { opacity:0; transform:scale(.4) translateY(40px); }
+      65%  { opacity:1; transform:scale(1.05) translateY(-3px); }
+      100% { opacity:1; transform:scale(1) translateY(0); }
+    }
+    .fc-inner { width:100%; height:100%; position:relative; transform-style:preserve-3d; transition:transform .7s cubic-bezier(.36,.07,.19,.97); border-radius:20px; }
+    .fc-wrap.fc-flipped .fc-inner { transform:rotateY(180deg); }
+    .fc-face { position:absolute; inset:0; backface-visibility:hidden; border-radius:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:hidden; padding:10px; }
+    .fc-front { background:#fff; border:2.5px solid #e8f8ee; box-shadow:0 4px 20px rgba(52,199,89,.1); transition:all .3s; }
+    .fc-wrap:hover .fc-front { border-color:#34C759; box-shadow:0 10px 32px rgba(52,199,89,.2); }
+    .fc-back { transform:rotateY(180deg); }
+    .fc-key  { font-family:var(--font-h); font-size:4.8rem; line-height:1; background:linear-gradient(135deg,#1A7A3D,#34C759); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+    .fc-hint { font-size:.75rem; color:#9ca3af; margin-top:8px; font-weight:700; }
+    .fc-emoji { font-size:3.4rem; }
+    .fc-word  { font-family:var(--font-h); font-size:1.5rem; margin-top:8px; color:#fff; }
+    .fc-speak { margin-top:8px; background:rgba(255,255,255,.22); border:1.5px solid rgba(255,255,255,.5); border-radius:50px; padding:4px 14px; color:#fff; font-weight:800; font-size:.78rem; cursor:pointer; transition:background .2s; }
+    .fc-speak:hover { background:rgba(255,255,255,.38); }
+    .fback-c0 { background:linear-gradient(145deg,#34C759,#1A7A3D); }
+    .fback-c1 { background:linear-gradient(145deg,#FF6B9D,#E11D48); }
+    .fback-c2 { background:linear-gradient(145deg,#4FC3F7,#0288D1); }
+    .fback-c3 { background:linear-gradient(145deg,#FF8C42,#DC6B00); }
+    .fback-c4 { background:linear-gradient(145deg,#FFD166,#F59E0B); }
+    .fback-c5 { background:linear-gradient(145deg,#7C3AED,#4C1D95); }
+    .fc-q-opt {
+      font-family:var(--font-h); font-size:1.35rem; padding:16px; border-radius:16px;
+      border:2.5px solid #e5e7eb; background:#fafafa; cursor:pointer; transition:all .25s; color:#4b5563;
+    }
+    .fc-q-opt:hover   { border-color:#22c55e; color:#065f46; transform:translateY(-2px); }
+    .fc-q-opt.correct { background:#ecfdf5; border-color:#22c55e; color:#065f46; animation:fcCorrect .4s ease; }
+    .fc-q-opt.wrong   { background:#fef2f2; border-color:#ef4444; color:#991b1b; animation:fcWrong .4s ease; }
+    .fc-q-opt.reveal  { background:#ecfdf5; border-color:#22c55e; color:#065f46; }
+    @keyframes fcCorrect { 0%,100%{transform:scale(1);} 40%{transform:scale(1.1);} }
+    @keyframes fcWrong { 0%,100%{transform:translateX(0);} 20%{transform:translateX(-7px);} 60%{transform:translateX(7px);} }
+    #fc-panel { animation: fcPanelIn .35s ease both; }
+    @keyframes fcPanelIn { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:none;} }
+
+    /* ── MOBILE OVERLAY ── */
+    .sidebar-overlay {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,.4); z-index:190;
+    }
+    .sidebar-overlay.open { display:block; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 991px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main-wrap { margin-left: 0; }
+      .hamburger { display:flex; }
+      .page-content { padding: 20px 20px 40px; }
+      .topbar { padding: 12px 20px; }
+      .wb-mascot { display:none; }
+      .welcome-banner { padding:24px 24px; }
+    }
+    @media (max-width: 576px) {
+      .page-content { padding: 16px 14px 36px; }
+      .welcome-banner h1 { font-size:1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar overlay (mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-brand"><span style="color:#1B5FAA">I</span><span style="color:#2AB5E8">N</span><span style="color:#3DBF6E">F</span><span style="color:#F05545">O</span><span style="color:#8A3AB9">W</span><span style="color:#F5C234">A</span><span style="color:#F57C22">L</span><span style="color:#8A3AB9">L</span></div>
+
+  <nav class="sb-nav">
+    <a class="sb-link active" href="{% url 'dashboard' %}">
+      <i class="bi bi-grid-fill"></i><span class="lbl">Dashboard</span>
+    </a>
+    <a class="sb-link" href="{% url 'flashcards_user' %}">
+      <i class="bi bi-collection-fill"></i><span class="lbl">Flash Cards</span>
+    </a>
+    <a class="sb-link" href="{% url 'arwall_page' %}">
+      <i class="bi bi-camera-video-fill"></i><span class="lbl">AR Wall</span>
+    </a>
+    <a class="sb-link" href="{% url 'feedback' %}">
+      <i class="bi bi-chat-dots"></i><span class="lbl">Feedback</span>
+    </a>
+    <a class="sb-link" href="{% url 'profile' %}">
+      <i class="bi bi-person-circle"></i><span class="lbl">Profile</span>
+    </a>
+    
+    <a class="sb-link" href="{% url 'index' %}">
+      <i class="bi bi-box-arrow-left"></i><span class="lbl">Logout</span>
+    </a>
+  </nav>
+
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar">{{ user.username|first|upper }}</div>
+      <div>
+        <div class="sb-name">{{ user.username }}</div>
+        <div class="sb-role">⭐ {{ db_stars }} Stars Earned</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<div class="main-wrap">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2>Hi, {{user.username}}! Welcome 🎓</h2>
+      <p id="todayDate"></p>
+    </div>
+    <div class="topbar-right">
+        <button class="topbar-icon hamburger" onclick="openSidebar()"><i class="bi bi-list"></i></button>
+        
+        <!-- Notifications Button -->
+        <div class="topbar-icon" data-bs-toggle="offcanvas" data-bs-target="#notificationPanel">
+            <i class="bi bi-bell-fill"></i>
+        </div>
+        
+        <!-- Settings Button -->
+        <div class="topbar-icon" data-bs-toggle="modal" data-bs-target="#settingsModal">
+            <i class="bi bi-gear-fill"></i>
+        </div>
+        
+        <!-- Dynamic Avatar: Takes the first letter of username and makes it uppercase -->
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#ec4899);
+                    display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;cursor:pointer;">
+            {{ user.username|first|upper }}
+        </div>
+    </div>
+  </div>
+
+  <!-- Page content -->
+  <div class="page-content" id="dashboard-content">
+
+    <!-- ══ WELCOME BANNER ══ -->
+    <div class="welcome-banner">
+      <div class="wb-orb wb-orb-1"></div>
+      <div class="wb-orb wb-orb-2"></div>
+      <div class="wb-orb wb-orb-3"></div>
+      <div style="position:relative;z-index:2;">
+        <h1>Welcome Back, {{user.username}}! 🚀</h1>
+        <p>You're on a 5-day learning streak! Keep going — you're doing amazing. Today's goal: complete 2 categories and earn 10 stars.</p>
+        <div class="wb-pills">
+          <span class="wb-pill">🔥 5-Day Streak</span>
+          <span class="wb-pill">⭐ 240 Stars</span>
+          <span class="wb-pill">🎯 42 Quiz Wins</span>
+          <span class="wb-pill">📚 3 of 6 Categories</span>
+        </div>
+      </div>
+      <div class="wb-mascot">🦉</div>
+    </div>
+
+    <!-- ══ STAT CARDS ══ -->
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-lg-3">
+        <div class="stat-card sc-purple">
+          <div class="stat-icon si-purple">⭐</div>
+          <div class="stat-num" id="ctr-stars">{{ db_stars }}</div>
+          <div class="stat-lbl">Stars Earned</div>
+          <div class="stat-change up"><i class="bi bi-arrow-up-short"></i> +18 this week</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat-card sc-pink">
+          <div class="stat-icon si-pink">🃏</div>
+          <div class="stat-num" id="ctr-cards">0</div>
+          <div class="stat-lbl">Cards Explored</div>
+          <div class="stat-change up"><i class="bi bi-arrow-up-short"></i> +12 today</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat-card sc-teal">
+          <div class="stat-icon si-teal">🎯</div>
+          <div class="stat-num" id="ctr-quiz">0</div>
+          <div class="stat-lbl">Quiz Score %</div>
+          <div class="stat-change up"><i class="bi bi-arrow-up-short"></i> +5% from last week</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat-card sc-yellow">
+          <div class="stat-icon si-yellow">🔥</div>
+          <div class="stat-num" id="ctr-streak">0</div>
+          <div class="stat-lbl">Day Streak</div>
+          <div class="stat-change same"><i class="bi bi-dash"></i> Keep it going!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PROGRESS + RADAR CHART ══ -->
+    <div class="row g-3 mb-4">
+
+      <!-- Category Progress Rings -->
+      <div class="col-lg-8">
+        <div class="chart-card h-100">
+          <div class="chart-title">📚 Learning Progress by Category</div>
+          <div class="chart-sub">Hover each card to see details · Click to go learn</div>
+          <div class="row g-3" id="cat-rings"></div>
+        </div>
+      </div>
+
+      <!-- Radar chart -->
+      <div class="col-lg-4">
+        <div class="chart-card h-100">
+          <div class="chart-title">📊 Skill Overview</div>
+          <div class="chart-sub">All 6 categories at a glance</div>
+          <canvas id="radarChart" height="240"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ ACHIEVEMENTS + ACTIVITY ══ -->
+    <div class="row g-3 mb-4">
+
+      <!-- Badges -->
+      <div class="col-lg-7">
+        <div class="chart-card">
+          <div class="chart-title mb-3">🏆 Achievements & Badges</div>
+          <div class="badge-grid" id="badges-grid"></div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="col-lg-5">
+        <div class="chart-card h-100">
+          <div class="chart-title mb-3">🕐 Recent Activity</div>
+          <div id="activity-list">
+            {% for activity in recent_activity %}
+            <div class="activity-item">
+                <div class="act-ico" style="background: var(--purple-l);">✨</div>
+                <div class="act-info">
+                    <div class="act-title">{{ activity.category|title }} Quiz</div>
+                    <div class="act-time">{{ activity.completed_at|timesince }} ago</div>
+                </div>
+                <div class="act-score">+{{ activity.score }} ⭐</div>
+            </div>
+            {% empty %}
+            <p class="text-center text-muted small py-3">No adventures yet. Start a quiz!</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ QUICK START ══ -->
+    <div class="row g-3 mb-4">
+      <div class="col-12">
+        <div class="section-title-sm">⚡ Quick Start Learning</div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <a class="quick-card" href="#" onclick="showSection('flashcards','alphabets');return false;">
+          <div class="quick-ico">🔤</div>
+          <div><div class="quick-name">Alphabets</div><div class="quick-sub">26 cards • A for Apple</div></div>
+          <i class="bi bi-arrow-right-circle-fill quick-arrow"></i>
+        </a>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <a class="quick-card" href="#" onclick="showSection('flashcards','numbers');return false;">
+          <div class="quick-ico">🔢</div>
+          <div><div class="quick-name">Numbers</div><div class="quick-sub">15 cards • 1 to 15</div></div>
+          <i class="bi bi-arrow-right-circle-fill quick-arrow"></i>
+        </a>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <a class="quick-card" href="#" onclick="showSection('flashcards','colors');return false;">
+          <div class="quick-ico">🎨</div>
+          <div><div class="quick-name">Colors</div><div class="quick-sub">12 cards • Red, Blue…</div></div>
+          <i class="bi bi-arrow-right-circle-fill quick-arrow"></i>
+        </a>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <a class="quick-card" href="#" onclick="showSection('flashcards','animals');return false;">
+          <div class="quick-ico">🐾</div>
+          <div><div class="quick-name">Animals</div><div class="quick-sub">14 cards • Dog, Lion…</div></div>
+          <i class="bi bi-arrow-right-circle-fill quick-arrow"></i>
+        </a>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <a class="quick-card" href="#" onclick="showSection('flashcards','fruits');return false;">
+          <div class="quick-ico">🍎</div>
+          <div><div class="quick-name">Fruits</div><div class="quick-sub">12 cards • Apple, Mango…</div></div>
+          <i class="bi bi-arrow-right-circle-fill quick-arrow"></i>
+        </a>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <a class="quick-card" href="#" onclick="showSection('flashcards','shapes');return false;">
+          <div class="quick-ico">🔷</div>
+          <div><div class="quick-name">Shapes</div><div class="quick-sub">10 cards • Circle, Star…</div></div>
+          <i class="bi bi-arrow-right-circle-fill quick-arrow"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- ══ MOTIVATIONAL ══ -->
+    <div class="motiv-banner">
+      <div class="motiv-icon">🌱</div>
+      <div class="motiv-text">
+        <h5>Keep Growing, Little Explorer!</h5>
+        <p>Every card you flip, every quiz you take, every word you learn — it's building your amazing brain. You're not just learning facts, you're learning how to love learning. That's the biggest superpower of all! 💪</p>
+      </div>
+    </div>
+
+  </div><!-- end page-content -->
+
+  <!-- ── INLINE FLASH CARDS PANEL ── -->
+  <div class="page-content" id="fc-panel" style="display:none;">
+
+    <!-- Header row -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <h2 style="font-family:var(--font-h);font-size:1.6rem;color:#1e1b4b;margin-bottom:4px;">🃏 Flash Cards</h2>
+        <p style="font-size:.85rem;color:#94a3b8;font-weight:700;margin:0;">Flip cards to learn • Quiz yourself • Track progress</p>
+      </div>
+      <button onclick="showSection('dashboard')"
+        style="display:flex;align-items:center;gap:7px;background:#f5f3ff;border:1.5px solid #ddd6fe;
+               color:#7c3aed;border-radius:50px;padding:9px 20px;font-weight:800;font-size:.88rem;cursor:pointer;transition:all .2s;">
+        ← Back to Dashboard
+      </button>
+    </div>
+
+    <!-- Mode Toggle -->
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+      <button id="fc-learn-btn" class="fc-mode-btn fc-active" onclick="fcSetMode('learn')">📚 Learn</button>
+      <button id="fc-quiz-btn"  class="fc-mode-btn"           onclick="fcSetMode('quiz')">🎯 Quiz Me!</button>
+    </div>
+
+    <!-- Category Tabs -->
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+      <button class="fc-cat-btn fc-cat-active" data-cat="alphabets" onclick="fcSetCat('alphabets')">🔤 Alphabets</button>
+      <button class="fc-cat-btn"               data-cat="numbers"   onclick="fcSetCat('numbers')">🔢 Numbers</button>
+      <button class="fc-cat-btn"               data-cat="colors"    onclick="fcSetCat('colors')">🎨 Colors</button>
+      <button class="fc-cat-btn"               data-cat="animals"   onclick="fcSetCat('animals')">🐾 Animals</button>
+      <button class="fc-cat-btn"               data-cat="fruits"    onclick="fcSetCat('fruits')">🍎 Fruits</button>
+      <button class="fc-cat-btn"               data-cat="shapes"    onclick="fcSetCat('shapes')">🔷 Shapes</button>
+    </div>
+
+    <!-- Progress -->
+    <div style="display:flex;align-items:center;gap:12px;max-width:600px;margin-bottom:20px;">
+      <span style="font-weight:800;font-size:.83rem;color:#64748b;white-space:nowrap;" id="fc-prog-label">0 / 5 seen</span>
+      <div style="flex:1;height:10px;background:#E5E7EB;border-radius:10px;overflow:hidden;">
+        <div id="fc-prog-fill" style="height:100%;background:linear-gradient(90deg,#34C759,#4FC3F7);border-radius:10px;width:0%;transition:width .6s ease;"></div>
+      </div>
+    </div>
+
+    <!-- Learn Grid -->
+    <div id="fc-learn-section">
+      <div id="fc-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:20px;max-width:1100px;"></div>
+    </div>
+
+    <!-- Quiz Section -->
+    <div id="fc-quiz-section" style="display:none;max-width:680px;margin:0 auto;">
+      <div style="background:#fff;border-radius:24px;box-shadow:0 8px 32px rgba(52,199,89,.1);padding:36px 32px;text-align:center;border:2px solid rgba(52,199,89,.12);">
+        <div style="font-size:.88rem;font-weight:800;color:#94a3b8;margin-bottom:10px;letter-spacing:.05em;text-transform:uppercase;" id="fc-q-counter">Question 1 / 5</div>
+        <div style="font-size:6rem;line-height:1;margin:12px 0;" id="fc-q-emoji">🍎</div>
+        <div style="font-family:var(--font-h);font-size:1.45rem;color:#374151;margin-bottom:24px;" id="fc-q-text">What is this?</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;" id="fc-q-options"></div>
+        <div style="margin-top:18px;font-family:var(--font-h);font-size:1.25rem;min-height:36px;" id="fc-q-feedback"></div>
+        <button id="fc-q-next" onclick="fcNextQuestion()"
+          style="display:none;margin-top:18px;padding:12px 36px;background:linear-gradient(135deg,#34C759,#1A7A3D);
+                 color:#fff;font-family:var(--font-h);font-size:1.15rem;border:none;border-radius:50px;cursor:pointer;
+                 box-shadow:0 6px 22px rgba(52,199,89,.4);">Next ➡️</button>
+      </div>
+    </div>
+
+    <!-- Quiz finish modal -->
+    <div id="fc-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(4px);">
+      <div style="background:#fff;border-radius:28px;padding:40px;text-align:center;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.25);border:2px solid rgba(52,199,89,.2);">
+        <div style="font-size:5rem;" id="fc-modal-emoji">🎉</div>
+        <div style="font-family:var(--font-h);font-size:1.9rem;background:linear-gradient(135deg,#1A7A3D,#34C759);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin:12px 0 6px;" id="fc-modal-title">Quiz Complete!</div>
+        <div style="font-size:2.5rem;margin:8px 0;" id="fc-modal-stars">⭐⭐⭐</div>
+        <div style="font-size:1rem;color:#6B7280;font-weight:700;" id="fc-modal-score">You got 4 / 5!</div>
+        <button onclick="fcCloseModal()"
+          style="margin-top:20px;padding:13px 36px;background:linear-gradient(135deg,#34C759,#1A7A3D);color:#fff;border:none;
+                 border-radius:50px;font-family:var(--font-h);font-size:1.15rem;cursor:pointer;box-shadow:0 6px 22px rgba(52,199,89,.4);">Play Again 🔄</button>
+      </div>
+    </div>
+
+  </div><!-- end fc-panel -->
+
+</div><!-- end main-wrap -->
+
+<!-- Notification Side Panel -->
+<div class="offcanvas offcanvas-end rounded-start-4" tabindex="-1" id="notificationPanel" style="width: 350px; border-left: none;">
+  <div class="offcanvas-header border-bottom">
+    <h5 class="offcanvas-title" style="font-family: var(--font-h); color: var(--purple);">Alerts & Tips 🔔</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="alert alert-info border-0 rounded-4 small">
+      <strong>Pro Tip:</strong> Try the "Animals" quiz today to earn a new badge!
+    </div>
+    <div class="d-flex gap-3 mb-3 p-2">
+      <div class="fs-2">🌟</div>
+      <div>
+        <p class="mb-0 fw-bold small">New Milestone!</p>
+        <p class="text-muted extra-small mb-0">You just reached 200 stars. Keep it up!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal fade" id="settingsModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0" style="border-radius: 28px; overflow: hidden;">
+      <div class="modal-header" style="background: var(--bg);">
+        <h5 class="modal-title" style="font-family: var(--font-h);">Adventure Settings ⚙️</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="mb-4">
+          <label class="form-label fw-bold small text-uppercase text-muted">Sound Effects</label>
+          <div class="form-check form-switch">
+            <input class="form-check-斉 form-check-input" type="checkbox" checked>
+            <label class="form-check-label">Enable Voice & Music</label>
+          </div>
+        </div>
+        <div class="mb-3">
+            <a href="{% url 'profile' %}" class="btn btn-outline-primary w-100 rounded-pill fw-bold">Update Profile</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+/* ── DATE ── */
+const days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const now    = new Date();
+document.getElementById('todayDate').textContent =
+  days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate() + ' ' + now.getFullYear();
+
+/* ── SIDEBAR MOBILE ── */
+function openSidebar()  { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.add('open'); }
+function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('open'); }
+
+
+/* ── ANIMATED COUNTERS ── */
+function animateCount(id, target, suffix, duration) {
+  const el = document.getElementById(id);
+  const step = target / (duration / 16);
+  let current = 0;
+  const timer = setInterval(() => {
+    current = Math.min(current + step, target);
+    el.textContent = Math.round(current) + (suffix || '');
+    if (current >= target) clearInterval(timer);
+  }, 16);
+}
+setTimeout(() => {
+  animateCount('ctr-stars',  240, '',  1200);
+  animateCount('ctr-cards',  68,  '',  1000);
+  animateCount('ctr-quiz',   84,  '%', 1100);
+  animateCount('ctr-streak', 5,   '',  800);
+  // Update the counter to use the DB value
+  animateCount('ctr-stars', {{ db_stars|default:0 }}, '', 1200);
+}, 300);
+
+/* ── CATEGORY DATA ── */
+const CAT_DATA = [
+  { name:'Alphabets', emoji:'🔤', total:26, done: {{ cat_progress.alphabets|default:0 }}, color:'#7c3aed', light:'#ede9fe', btn:'#7c3aed' },
+  { name:'Numbers',   emoji:'🔢', total:10, done: {{ cat_progress.numbers|default:0 }}, color:'#ec4899', light:'#fce7f3', btn:'#ec4899' },
+  { name:'Colors',    emoji:'🎨', total:10, done: {{ cat_progress.colors|default:0 }}, color:'#14b8a6', light:'#ccfbf1', btn:'#14b8a6' },
+  { name:'Animals',   emoji:'🐾', total:12, done: {{ cat_progress.animals|default:0 }}, color:'#f97316', light:'#ffedd5', btn:'#f97316' },
+  { name:'Fruits',    emoji:'🍎', total:12, done: {{ cat_progress.fruits|default:0 }}, color:'#ef4444', light:'#fee2e2', btn:'#ef4444' },
+  { name:'Shapes',    emoji:'🔷', total:10, done: {{ cat_progress.shapes|default:0 }}, color:'#3b82f6', light:'#dbeafe', btn:'#3b82f6' },
+];
+
+/* ── PROGRESS RINGS ── */
+const ringGrid = document.getElementById('cat-rings');
+CAT_DATA.forEach(cat => {
+  const pct = Math.round((cat.done / cat.total) * 100);
+  const col = document.createElement('div');
+  col.className = 'col-6 col-sm-4 col-lg-4';
+  col.innerHTML = `
+    <div class="cat-prog-card">
+      <div class="ring-wrap">
+        <canvas id="ring-${cat.name}" width="100" height="100"></canvas>
+        <div class="ring-label">
+          <div class="ring-pct">${pct}%</div>
+          <div class="ring-done">${cat.done}/${cat.total}</div>
+        </div>
+      </div>
+      <div class="cat-name">${cat.emoji} ${cat.name}</div>
+      <div class="cat-count">${cat.done} of ${cat.total} cards</div>
+      <button onclick="showSection('flashcards','${cat.name.toLowerCase()}')" class="cat-btn" style="color:${cat.btn};border-color:${cat.btn};">
+        ${pct === 100 ? '✅ Done!' : pct > 0 ? '▶ Continue' : '🚀 Start'}
+      </button>
+    </div>`;
+  ringGrid.appendChild(col);
+
+  /* Draw donut ring */
+  const canvas = document.getElementById('ring-' + cat.name);
+  const ctx = canvas.getContext('2d');
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      datasets: [{
+        data: [cat.done, cat.total - cat.done],
+        backgroundColor: [cat.color, '#f1f5f9'],
+        borderWidth: 0,
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      cutout: '72%',
+      animation: { duration: 1200, easing: 'easeOutQuart' },
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+    }
+  });
+});
+
+/* ── RADAR CHART ── */
+new Chart(document.getElementById('radarChart'), {
+  type: 'radar',
+  data: {
+    labels: ['Alphabets','Numbers','Colors','Animals','Fruits','Shapes'],
+    datasets: [{
+      label: 'Progress %',
+      data: CAT_DATA.map(c => Math.round((c.done/c.total)*100)),
+      backgroundColor: 'rgba(124,58,237,.15)',
+      borderColor: '#7c3aed',
+      pointBackgroundColor: CAT_DATA.map(c => c.color),
+      pointBorderColor: '#fff',
+      pointRadius: 5,
+      borderWidth: 2,
+    }]
+  },
+  options: {
+    animation: { duration: 1400 },
+    scales: {
+      r: {
+        beginAtZero: true, max: 100,
+        ticks: { display: false },
+        grid: { color: 'rgba(0,0,0,.06)' },
+        pointLabels: { font: { family: "'Nunito', sans-serif", weight: '800', size: 11 }, color: '#64748b' }
+      }
+    },
+    plugins: { legend: { display: false } }
+  }
+});
+
+/* ── BADGES ── */
+const BADGES = [
+  { ico:'🌟', name:'First Flip',    desc:'Flipped your first card',  earned:true  },
+  { ico:'🔥', name:'5-Day Streak',  desc:'Learned 5 days in a row',  earned:true  },
+  { ico:'🎯', name:'Quiz Master',   desc:'Got 10 quiz answers right', earned:true  },
+  { ico:'📚', name:'Book Worm',     desc:'Explored 50+ cards',        earned:true  },
+  { ico:'🏆', name:'Perfect Score', desc:'100% in a quiz round',      earned:false },
+  { ico:'🌈', name:'All Rounder',   desc:'Complete all 6 categories', earned:false },
+  { ico:'⚡', name:'Speed Learner', desc:'10 cards in under 2 min',   earned:false },
+  { ico:'💎', name:'Diamond',       desc:'30-day streak',             earned:false },
+];
+const bg = document.getElementById('badges-grid');
+BADGES.forEach(b => {
+  const d = document.createElement('div');
+  d.className = 'badge-card' + (b.earned ? '' : ' locked');
+  d.innerHTML = `
+    ${b.earned ? '<div class="badge-earned">✓</div>' : ''}
+    <span class="badge-ico">${b.ico}</span>
+    <div class="badge-name">${b.name}</div>
+    <div class="badge-desc">${b.desc}</div>`;
+  bg.appendChild(d);
+});
+
+/* ── SECTION SWITCHING ── */
+function showSection(name, cat) {
+  const dash = document.getElementById('dashboard-content');
+  const fc   = document.getElementById('fc-panel');
+  if (name === 'dashboard') {
+    dash.style.display = ''; fc.style.display = 'none';
+    document.getElementById('sb-dashboard').classList.add('active');
+    document.getElementById('sb-flashcards').classList.remove('active');
+  } else {
+    dash.style.display = 'none'; fc.style.display = '';
+    document.getElementById('sb-dashboard').classList.remove('active');
+    document.getElementById('sb-flashcards').classList.add('active');
+    if (cat) fcSetCat(cat); else fcRenderCards();
+    closeSidebar();
+  }
+}
+
+/* ── INLINE FLASHCARD ENGINE ── */
+const FC_DATA = {
+  alphabets: [
+    {key:'A',emoji:'🍎',word:'Apple'},   {key:'B',emoji:'🏏', word:'Bat'},
+    {key:'C',emoji:'🐱',word:'Cat'},     {key:'D',emoji:'🐶', word:'Dog'},
+    {key:'E',emoji:'🐘',word:'Elephant'},{key:'F',emoji:'🐟', word:'Fish'},
+    {key:'G',emoji:'🦒',word:'Giraffe'}, {key:'H',emoji:'🏠', word:'House'},
+    {key:'I',emoji:'🍦',word:'Ice Cream'},{key:'J',emoji:'🃏',word:'Joker'},
+    {key:'K',emoji:'🪁',word:'Kite'},    {key:'L',emoji:'🦁', word:'Lion'},
+    {key:'M',emoji:'🐒',word:'Monkey'},  {key:'N',emoji:'📰', word:'Newspaper'},
+    {key:'O',emoji:'🍊',word:'Orange'},  {key:'P',emoji:'🦜', word:'Parrot'},
+    {key:'Q',emoji:'👸',word:'Queen'},   {key:'R',emoji:'🐇', word:'Rabbit'},
+    {key:'S',emoji:'🌟',word:'Star'},    {key:'T',emoji:'🐅', word:'Tiger'},
+    {key:'U',emoji:'☂️',word:'Umbrella'},{key:'V',emoji:'🎻', word:'Violin'},
+    {key:'W',emoji:'🐋',word:'Whale'},   {key:'X',emoji:'🎸', word:'Xylophone'},
+    {key:'Y',emoji:'🪀',word:'Yo-yo'},   {key:'Z',emoji:'🦓', word:'Zebra'},
+  ],
+  numbers: [
+    {key:'1', emoji:'🍎', word:'One'},
+    {key:'2', emoji:'🦋', word:'Two'},
+    {key:'3', emoji:'⭐', word:'Three'},
+    {key:'4', emoji:'🌈', word:'Four'},
+    {key:'5', emoji:'🎈', word:'Five'},
+    {key:'6', emoji:'🎀', word:'Six'},
+    {key:'7', emoji:'🌙', word:'Seven'},
+    {key:'8', emoji:'🎯', word:'Eight'},
+    {key:'9', emoji:'🌺', word:'Nine'},
+    {key:'10',emoji:'🔟', word:'Ten'},
+    {key:'11',emoji:'🦊', word:'Eleven'},
+    {key:'12',emoji:'🎂', word:'Twelve'},
+    {key:'13',emoji:'🌍', word:'Thirteen'},
+    {key:'14',emoji:'🌸', word:'Fourteen'},
+    {key:'15',emoji:'🏆', word:'Fifteen'},
+  ],
+  colors: [
+    {key:'🔴',emoji:'🍎', word:'Red'},      {key:'🟠',emoji:'🍊',word:'Orange'},
+    {key:'🟡',emoji:'🌻', word:'Yellow'},   {key:'🟢',emoji:'🌿',word:'Green'},
+    {key:'🔵',emoji:'🌊', word:'Blue'},     {key:'🟣',emoji:'🍇',word:'Purple'},
+    {key:'⚫',emoji:'🖤', word:'Black'},    {key:'⚪',emoji:'🤍',word:'White'},
+    {key:'🩷',emoji:'🌸', word:'Pink'},     {key:'🟤',emoji:'🍫',word:'Brown'},
+    {key:'🩵',emoji:'🧊', word:'Sky Blue'}, {key:'💛',emoji:'🌟',word:'Gold'},
+  ],
+  animals: [
+    {key:'🐶',emoji:'🐶',word:'Dog'},     {key:'🐱',emoji:'🐱',word:'Cat'},
+    {key:'🐰',emoji:'🐰',word:'Rabbit'},  {key:'🦁',emoji:'🦁',word:'Lion'},
+    {key:'🐘',emoji:'🐘',word:'Elephant'},{key:'🐯',emoji:'🐯',word:'Tiger'},
+    {key:'🦒',emoji:'🦒',word:'Giraffe'}, {key:'🦓',emoji:'🦓',word:'Zebra'},
+    {key:'🐻',emoji:'🐻',word:'Bear'},    {key:'🦊',emoji:'🦊',word:'Fox'},
+    {key:'🐸',emoji:'🐸',word:'Frog'},    {key:'🐧',emoji:'🐧',word:'Penguin'},
+    {key:'🦜',emoji:'🦜',word:'Parrot'},  {key:'🐬',emoji:'🐬',word:'Dolphin'},
+  ],
+  fruits: [
+    {key:'🍎',emoji:'🍎',word:'Apple'},       {key:'🍌',emoji:'🍌',word:'Banana'},
+    {key:'🍊',emoji:'🍊',word:'Orange'},      {key:'🍇',emoji:'🍇',word:'Grapes'},
+    {key:'🍓',emoji:'🍓',word:'Strawberry'},  {key:'🍍',emoji:'🍍',word:'Pineapple'},
+    {key:'🥭',emoji:'🥭',word:'Mango'},       {key:'🍒',emoji:'🍒',word:'Cherry'},
+    {key:'🍋',emoji:'🍋',word:'Lemon'},       {key:'🍉',emoji:'🍉',word:'Watermelon'},
+    {key:'🍑',emoji:'🍑',word:'Peach'},       {key:'🥝',emoji:'🥝',word:'Kiwi'},
+  ],
+  shapes: [
+    {key:'⭕',emoji:'⭕',word:'Circle'},    {key:'🔲',emoji:'🔲',word:'Square'},
+    {key:'🔺',emoji:'🔺',word:'Triangle'}, {key:'🔷',emoji:'🔷',word:'Diamond'},
+    {key:'⭐',emoji:'⭐',word:'Star'},     {key:'❤️',emoji:'❤️',word:'Heart'},
+    {key:'⬛',emoji:'⬛',word:'Rectangle'},{key:'🔶',emoji:'🔶',word:'Rhombus'},
+    {key:'🔵',emoji:'🔵',word:'Oval'},     {key:'💠',emoji:'💠',word:'Crystal'},
+  ],
+};
+
+let fcCat = 'alphabets', fcMode = 'learn', fcSeen = new Set();
+let fcQuizItems = [], fcQuizIdx = 0, fcQuizScore = 0, fcAnswered = false;
+
+function fcSetCat(cat) {
+  fcCat = cat;
+  document.querySelectorAll('.fc-cat-btn').forEach(b => b.classList.toggle('fc-cat-active', b.dataset.cat === cat));
+  if (fcMode === 'learn') fcRenderCards(); else fcStartQuiz();
+}
+function fcSetMode(mode) {
+  fcMode = mode;
+  document.getElementById('fc-learn-btn').classList.toggle('fc-active', mode === 'learn');
+  document.getElementById('fc-quiz-btn').classList.toggle('fc-active', mode === 'quiz');
+  document.getElementById('fc-learn-section').style.display = mode === 'learn' ? '' : 'none';
+  document.getElementById('fc-quiz-section').style.display  = mode === 'quiz'  ? '' : 'none';
+  if (mode === 'learn') fcRenderCards(); else fcStartQuiz();
+}
+function fcRenderCards() {
+  const grid = document.getElementById('fc-cards-grid');
+  grid.innerHTML = '';
+  FC_DATA[fcCat].forEach((item, idx) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'fc-wrap';
+    wrap.style.animationDelay = (idx * 0.08) + 's';
+    const cc = 'fback-c' + (idx % 6);
+    wrap.innerHTML = `
+      <div class="fc-inner">
+        <div class="fc-face fc-front">
+          <div class="fc-key">${item.key}</div>
+          <div class="fc-hint">👆 Tap to flip!</div>
+        </div>
+        <div class="fc-face fc-back ${cc}">
+          <div class="fc-emoji">${item.emoji}</div>
+          <div class="fc-word">${item.word}</div>
+          <button class="fc-speak" onclick="event.stopPropagation();fcSpeak('${item.word}')">🔊 Speak</button>
+        </div>
+      </div>`;
+    wrap.addEventListener('click', () => {
+      const inner = wrap.querySelector('.fc-inner');
+      inner.style.transform = '';
+      const wasFlipped = wrap.classList.contains('fc-flipped');
+      wrap.classList.toggle('fc-flipped');
+      if (!wasFlipped) { fcSeen.add(fcCat+'_'+idx); fcSpeak(item.word); fcUpdateProgress(); }
+    });
+    const inner = wrap.querySelector('.fc-inner');
+    wrap.addEventListener('mousemove', e => {
+      if (wrap.classList.contains('fc-flipped')) return;
+      const r = wrap.getBoundingClientRect();
+      inner.style.transform = `rotateX(${((e.clientY-r.top-r.height/2)/(r.height/2))*-8}deg) rotateY(${((e.clientX-r.left-r.width/2)/(r.width/2))*8}deg)`;
+    });
+    wrap.addEventListener('mouseleave', () => { if (!wrap.classList.contains('fc-flipped')) inner.style.transform = ''; });
+    grid.appendChild(wrap);
+  });
+  fcUpdateProgress();
+}
+function fcUpdateProgress() {
+  const total = FC_DATA[fcCat].length;
+  const seen  = [...fcSeen].filter(k => k.startsWith(fcCat + '_')).length;
+  document.getElementById('fc-prog-fill').style.width  = Math.round((seen/total)*100) + '%';
+  document.getElementById('fc-prog-label').textContent = seen + ' / ' + total + ' seen';
+}
+function fcStartQuiz() {
+  fcQuizItems = fcShuffle([...FC_DATA[fcCat]]);
+  fcQuizIdx = 0; fcQuizScore = 0; fcShowQuestion();
+}
+function fcQuizConfig(cat, item) {
+  switch (cat) {
+    case 'alphabets': return { displayEmoji: item.emoji, question: 'Which letter does this picture start with? 🔤', getLabel: o => o.key };
+    case 'numbers':   return { displayEmoji: item.key,   question: 'What is the word for this number? 🔢',          getLabel: o => o.word };
+    case 'colors':    return { displayEmoji: item.key,   question: 'What color is this? 🎨',                        getLabel: o => o.word };
+    case 'animals':   return { displayEmoji: item.emoji, question: 'What animal is this? 🐾',                       getLabel: o => o.word };
+    case 'fruits':    return { displayEmoji: item.emoji, question: 'Which fruit is this? 🍓',                        getLabel: o => o.word };
+    case 'shapes':    return { displayEmoji: item.emoji, question: 'What shape is this? 🔷',                        getLabel: o => o.word };
+    default:          return { displayEmoji: item.emoji, question: 'What is this?',                                  getLabel: o => o.word };
+  }
+}
+function fcShowQuestion() {
+  fcAnswered = false;
+  const item = fcQuizItems[fcQuizIdx];
+  const cfg  = fcQuizConfig(fcCat, item);
+  document.getElementById('fc-q-counter').textContent = `Question ${fcQuizIdx+1} / ${fcQuizItems.length}`;
+  document.getElementById('fc-q-emoji').textContent    = cfg.displayEmoji;
+  document.getElementById('fc-q-text').textContent     = cfg.question;
+  document.getElementById('fc-q-feedback').textContent = '';
+  document.getElementById('fc-q-next').style.display   = 'none';
+  const opts = fcShuffle([item, ...fcShuffle(FC_DATA[fcCat].filter(x => x.key !== item.key)).slice(0,3)]);
+  const optsDiv = document.getElementById('fc-q-options');
+  optsDiv.innerHTML = '';
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'fc-q-opt'; btn.textContent = cfg.getLabel(opt); btn.dataset.key = opt.key;
+    btn.onclick = () => fcAnswer(btn, item.key);
+    optsDiv.appendChild(btn);
+  });
+}
+function fcAnswer(btn, correctKey) {
+  if (fcAnswered) return; fcAnswered = true;
+  const fb = document.getElementById('fc-q-feedback');
+  if (btn.dataset.key === correctKey) {
+    btn.classList.add('correct'); fb.textContent = '🎉 Correct! Well done!'; fb.style.color = '#065f46'; fcQuizScore++;
+  } else {
+    btn.classList.add('wrong'); fb.textContent = '❌ Oops!'; fb.style.color = '#991b1b';
+    document.querySelectorAll('.fc-q-opt').forEach(b => { if (b.dataset.key === correctKey) b.classList.add('reveal'); });
+  }
+  document.getElementById('fc-q-next').style.display = 'inline-block';
+}
+function fcNextQuestion() {
+    fcQuizIdx++;
+    if (fcQuizIdx >= fcQuizItems.length) {
+        const pct = fcQuizScore / fcQuizItems.length;
+        
+        // 1. Get CSRF Token safely
+        const getCookie = (name) => {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        };
+
+        // 2. Send score to Django Database
+        fetch('/save-quiz-result/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                category: fcCat,
+                total: fcQuizItems.length,
+                score: fcQuizScore
+            })
+        })
+        .then(res => res.json())
+        .then(data => console.log("Database updated!"))
+        .catch(err => console.error("Error:", err));
+
+        // 3. Show the Completion Modal
+        document.getElementById('fc-modal-stars').textContent = pct >= .8 ? '⭐⭐⭐' : pct >= .6 ? '⭐⭐' : '⭐';
+        document.getElementById('fc-modal-score').textContent = `You got ${fcQuizScore} / ${fcQuizItems.length} correct!`;
+        document.getElementById('fc-modal-title').textContent = pct === 1 ? 'Perfect! 🌟' : pct >= .6 ? 'Great Job! 🎊' : 'Keep Going! 💪';
+        document.getElementById('fc-modal').style.display = 'flex';
+    } else { 
+        fcShowQuestion(); 
+    }
+}
+
+function fcCloseModal() { document.getElementById('fc-modal').style.display = 'none'; fcStartQuiz(); }
+function fcSpeak(text) {
+  if (!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text); utt.rate = 0.85; utt.pitch = 1.2;
+  window.speechSynthesis.speak(utt);
+}
+function fcShuffle(arr) {
+  for (let i=arr.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+  return arr;
+}
+
+/* ── RECENT ACTIVITY ── */
+const ACTIVITY = [
+  { ico:'🔤', bg:'#ede9fe', title:'Completed Alphabets Quiz', score:'+8 ⭐', time:'10 min ago' },
+  { ico:'🎨', bg:'#ccfbf1', title:'Explored 7 Colors Cards',   score:'+7 ⭐', time:'1 hour ago' },
+  { ico:'🔢', bg:'#fce7f3', title:'Numbers — Perfect Score!',  score:'+12 ⭐',time:'Yesterday'  },
+  { ico:'🐾', bg:'#ffedd5', title:'Started Animals Category',  score:'+5 ⭐', time:'2 days ago' },
+];
+const al = document.getElementById('activity-list');
+ACTIVITY.forEach(a => {
+  const d = document.createElement('div');
+  d.className = 'activity-item';
+  d.innerHTML = `
+    <div class="act-ico" style="background:${a.bg};">${a.ico}</div>
+    <div class="act-info">
+      <div class="act-title">${a.title}</div>
+      <div class="act-time">${a.time}</div>
+    </div>
+    <div class="act-score">${a.score}</div>`;
+  al.appendChild(d);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About Us – InfoWall</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+  :root{
+    --cream:#FFFEF7; --cream2:#F7F9F0;
+    --green:#34C759; --green-d:#1A7A3D; --green-l:#E8F5E9; --green-p:#F0FBF1;
+    --yellow:#FFD166; --yellow-d:#F5A623; --yellow-l:#FFF8E1;
+    --blue:#4FC3F7;  --blue-d:#0288D1;  --blue-l:#E1F5FE;
+    --coral:#FF6B6B; --coral-l:#FFEBEE;
+    --purple:#9B59B6;--purple-l:#F3E8FF;
+    --dark:#1A2332;  --gray:#64748B; --gray-l:#94A3B8;
+    --border:#E8F0E8;
+    --sh-sm:0 2px 12px rgba(0,0,0,.06);
+    --sh:0 8px 32px rgba(0,0,0,.10);
+    --sh-lg:0 20px 60px rgba(0,0,0,.14);
+    --r:20px; --r-lg:28px;
+    --fh:'Fredoka One',cursive;
+    --fb:'Nunito',sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--fb);background:var(--cream);color:var(--dark);overflow-x:hidden}
+
+  .sec-label{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;padding:5px 16px;border-radius:50px;margin-bottom:14px}
+  .sec-h{font-family:var(--fh);font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.15;margin-bottom:12px}
+  .sec-p{font-size:1rem;color:var(--gray);line-height:1.8;max-width:580px;margin:0 auto}
+  .grad-green{background:linear-gradient(135deg,var(--green),var(--green-d));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .grad-yellow{background:linear-gradient(135deg,var(--yellow),var(--yellow-d));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .grad-blue{background:linear-gradient(135deg,var(--blue),var(--blue-d));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+
+  .reveal{opacity:0;transform:translateY(32px);transition:opacity .65s ease,transform .65s ease}
+  .reveal.vis{opacity:1;transform:translateY(0)}
+
+  /* NAVBAR */
+  .navbar{background:rgba(255,254,247,.92);backdrop-filter:blur(18px);border-bottom:1px solid rgba(52,199,89,.1);padding:14px 0;position:sticky;top:0;z-index:1000;box-shadow:0 2px 20px rgba(0,0,0,.06)}
+  .nav-link-custom{font-weight:700;color:var(--dark);font-size:.92rem;transition:color .2s;text-decoration:none;padding:6px 10px;display:block}
+  .nav-link-custom:hover,.nav-link-active{color:var(--green-d)!important}
+  .btn-nav-cta{background:linear-gradient(135deg,var(--green),var(--green-d));color:#fff;border:none;border-radius:50px;padding:10px 24px;font-weight:800;font-size:.9rem;text-decoration:none;box-shadow:0 4px 16px rgba(52,199,89,.35);transition:all .25s}
+  .btn-nav-cta:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(52,199,89,.5);color:#fff}
+  .btn-nav-cart{
+    position:relative;display:inline-flex;align-items:center;justify-content:center;
+    width:42px;height:42px;border-radius:50%;border:2px solid var(--border);
+    color:var(--dark);font-size:1.15rem;text-decoration:none;transition:all .25s;background:#fff;
+  }
+  .btn-nav-cart:hover{border-color:var(--green);color:var(--green-d);transform:translateY(-2px)}
+  .cart-badge{
+    position:absolute;top:-4px;right:-4px;
+    background:var(--green);color:#fff;font-size:.6rem;font-weight:900;
+    width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    border:2px solid #fff;line-height:1;
+  }
+
+  /* HERO */
+  #hero{background:linear-gradient(160deg,#F0FBF1 0%,#FFFEF7 50%,#FFF8E1 100%);padding:70px 0 60px;position:relative;overflow:hidden;min-height:100vh;display:flex;align-items:center}
+  #hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(52,199,89,.12) 1.5px,transparent 1.5px);background-size:30px 30px;pointer-events:none}
+  .hero-blob{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;animation:blobFloat 12s ease-in-out infinite}
+  .hb1{width:500px;height:500px;background:rgba(52,199,89,.10);top:-120px;left:-100px}
+  .hb2{width:350px;height:350px;background:rgba(255,209,102,.14);bottom:-60px;right:-80px;animation-delay:5s}
+  @keyframes blobFloat{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(20px,-30px) scale(1.05)}}
+  .hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(52,199,89,.1);border:1px solid rgba(52,199,89,.25);border-radius:50px;padding:6px 18px;color:var(--green-d);font-size:.82rem;font-weight:800;margin-bottom:22px;animation:fadeDown .6s ease both}
+  .hero-h{font-family:var(--fh);font-size:clamp(2.4rem,5vw,3.8rem);line-height:1.1;margin-bottom:20px;animation:fadeDown .6s .1s ease both}
+  .hero-p{font-size:1.05rem;color:var(--gray);line-height:1.85;max-width:540px;margin-bottom:30px;animation:fadeDown .6s .2s ease both}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
+  .hero-btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--green),var(--green-d));color:#fff;border-radius:50px;font-family:var(--fh);font-size:1rem;padding:13px 30px;text-decoration:none;box-shadow:0 6px 22px rgba(52,199,89,.38);transition:all .3s;animation:fadeDown .6s .28s ease both}
+  .hero-btn:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(52,199,89,.5);color:#fff}
+  .hero-logo-wrap{display:flex;align-items:center;justify-content:center;min-height:420px;position:relative}
+  .hero-logo-wrap::before{content:'';position:absolute;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(52,199,89,.09) 0%,rgba(255,209,102,.07) 55%,transparent 100%);animation:blobFloat 10s ease-in-out infinite;pointer-events:none}
+  .hero-logo-wrap::after{content:'';position:absolute;width:380px;height:380px;border-radius:50%;border:1.5px dashed rgba(52,199,89,.18);animation:blobFloat 14s ease-in-out infinite reverse;pointer-events:none}
+  .hero-logo-img{width:420px;max-width:92%;position:relative;z-index:5;filter:drop-shadow(0 28px 56px rgba(52,199,89,.22)) drop-shadow(0 8px 20px rgba(0,0,0,.09));animation:logoFloat 6s ease-in-out infinite}
+  @keyframes logoFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-18px) scale(1.02)}}
+
+  /* MISSION & VISION */
+  #mission{background:#fff;padding:90px 0}
+  .mv-card{border-radius:var(--r-lg);padding:40px 36px;height:100%;transition:all .35s}
+  .mv-card:hover{transform:translateY(-8px);box-shadow:var(--sh-lg)}
+  .mv-card.mission{background:linear-gradient(145deg,#F0FBF1,#E8F5E9);border:1.5px solid rgba(52,199,89,.2)}
+  .mv-card.vision{background:linear-gradient(145deg,#FFF8E1,#FFF3CD);border:1.5px solid rgba(245,166,35,.25)}
+  .mv-icon{font-size:3.2rem;margin-bottom:18px;display:block}
+  .mv-card h3{font-family:var(--fh);font-size:1.6rem;margin-bottom:12px;color:var(--dark)}
+  .mv-card p{font-size:.96rem;color:var(--gray);line-height:1.85;margin:0}
+
+  /* STORY */
+  #story{background:var(--cream2);padding:90px 0}
+  .timeline{position:relative;padding-left:32px}
+  .timeline::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--green),var(--yellow-d),var(--coral))}
+  .tl-item{position:relative;padding:0 0 32px 28px}
+  .tl-dot{position:absolute;left:-27px;top:4px;width:16px;height:16px;border-radius:50%;border:3px solid var(--cream2)}
+  .tl-year{font-family:var(--fh);font-size:.78rem;color:var(--green-d);font-weight:900;letter-spacing:1px;margin-bottom:4px;text-transform:uppercase}
+  .tl-title{font-family:var(--fh);font-size:1.05rem;color:var(--dark);margin-bottom:6px}
+  .tl-text{font-size:.88rem;color:var(--gray);line-height:1.7}
+
+  /* VALUES */
+  #values{background:#fff;padding:90px 0}
+  .val-card{background:var(--cream2);border-radius:var(--r);padding:28px 22px;border:1.5px solid var(--border);text-align:center;transition:all .3s;height:100%}
+  .val-card:hover{transform:translateY(-8px);box-shadow:var(--sh-lg);background:#fff;border-color:var(--green)}
+  .val-ico{font-size:2.8rem;margin-bottom:14px;display:block;transition:transform .3s}
+  .val-card:hover .val-ico{transform:scale(1.18) rotate(-8deg)}
+  .val-card h5{font-family:var(--fh);font-size:1.05rem;margin-bottom:8px;color:var(--dark)}
+  .val-card p{font-size:.85rem;color:var(--gray);line-height:1.7;margin:0}
+
+  /* STATS BAND */
+  #stats-band{background:linear-gradient(135deg,var(--dark) 0%,#0B3D1A 100%);padding:70px 0}
+  .sb-item{text-align:center;padding:16px}
+  .sb-num{font-family:var(--fh);font-size:3rem;background:linear-gradient(135deg,var(--green),var(--yellow));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+  .sb-lbl{font-size:.82rem;color:rgba(255,255,255,.6);font-weight:800;text-transform:uppercase;letter-spacing:.8px;margin-top:6px}
+
+  /* CTA */
+  #cta{background:linear-gradient(135deg,#1A7A3D 0%,#34C759 40%,#1ABC9C 100%);padding:90px 0;text-align:center;position:relative;overflow:hidden}
+  #cta::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.08) 2px,transparent 2px);background-size:32px 32px}
+  #cta h2{font-family:var(--fh);font-size:clamp(1.9rem,4vw,3rem);color:#fff;margin-bottom:14px;position:relative;z-index:2}
+  #cta p{color:rgba(255,255,255,.82);font-size:1rem;max-width:500px;margin:0 auto 32px;line-height:1.8;position:relative;z-index:2}
+  .cta-btns{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;position:relative;z-index:2}
+  .btn-cta-w{background:#fff;color:var(--green-d);border:none;border-radius:50px;font-family:var(--fh);font-size:1.1rem;padding:14px 40px;box-shadow:0 8px 32px rgba(0,0,0,.2);transition:all .3s;text-decoration:none;display:inline-block}
+  .btn-cta-w:hover{transform:translateY(-4px) scale(1.03);color:var(--green-d)}
+  .btn-cta-outline{background:transparent;border:2.5px solid rgba(255,255,255,.6);color:#fff;border-radius:50px;font-family:var(--fh);font-size:1.1rem;padding:12px 36px;text-decoration:none;display:inline-block;transition:all .3s}
+  .btn-cta-outline:hover{background:rgba(255,255,255,.15);border-color:#fff;color:#fff}
+
+  /* FOOTER */
+  footer{background:var(--dark);padding:60px 0 28px;color:rgba(255,255,255,.65)}
+  .footer-brand{font-family:var(--fh);font-size:1.6rem;color:#fff;margin-bottom:8px;font-weight:800}
+  .footer-tagline{font-size:.85rem;color:rgba(255,255,255,.45);margin-bottom:16px}
+  .footer-social{display:flex;gap:10px;margin-top:16px}
+  .fsoc{width:36px;height:36px;border-radius:12px;border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.55);font-size:.95rem;transition:all .2s;text-decoration:none}
+  .fsoc:hover{background:var(--green);border-color:var(--green);color:#fff}
+  .footer-col h6{font-family:var(--fh);font-size:.95rem;color:#fff;margin-bottom:16px}
+  .footer-link{display:block;color:rgba(255,255,255,.5);font-size:.85rem;font-weight:700;text-decoration:none;padding:4px 0;transition:color .2s}
+  .footer-link:hover{color:var(--green)}
+  .footer-bottom{border-top:1px solid rgba(255,255,255,.08);margin-top:40px;padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+  .footer-bottom p{font-size:.82rem;color:rgba(255,255,255,.4);margin:0}
+
+  @media(max-width:991px){.hero-logo-img{width:300px}.hero-logo-wrap::before{width:340px;height:340px}.hero-logo-wrap::after{width:270px;height:270px}}
+  @media(max-width:767px){
+    .hero-logo-wrap{display:none}
+    #hero{padding:70px 0 48px;min-height:auto}
+    #mission,#story,#values,#stats-band,#cta{padding:56px 0}
+    .mv-card{padding:26px 18px}
+    .timeline{padding-left:22px}
+    .cta-btns{flex-direction:column;align-items:center}
+    .footer-bottom{flex-direction:column;text-align:center}
+  }
+  @media(max-width:480px){
+    .hero-h{font-size:2rem}
+    .sec-h{font-size:1.65rem}
+    .hero-p{font-size:.95rem}
+    .sb-num{font-size:2.2rem}
+  }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a href="{% url 'index' %}" style="text-decoration:none;font-family:var(--fh);font-size:1.9rem;letter-spacing:1px;font-weight:800">
+      <span style="color:#1B5FAA">I</span><span style="color:#2AB5E8">N</span><span style="color:#3DBF6E">F</span><span style="color:#F05545">O</span><span style="color:#8A3AB9">W</span><span style="color:#F5C234">A</span><span style="color:#F57C22">L</span><span style="color:#8A3AB9">L</span>
+    </a>
+    <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navmenu">
+      <ul class="navbar-nav mx-auto gap-lg-1">
+        <li class="nav-item"><a class="nav-link-custom" href="{% url 'index' %}">Home</a></li>
+        <li class="nav-item"><a class="nav-link-custom" href="{% url 'shop' %}">Shop</a></li>
+        <li class="nav-item"><a class="nav-link-custom nav-link-active" href="{% url 'about' %}">About</a></li>
+        <li class="nav-item"><a class="nav-link-custom" href="{% url 'contact' %}">Contact</a></li>
+        <li class="nav-item"><a class="nav-link-custom" href="{% url 'services' %}">Services</a></li>
+      </ul>
+      <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">
+        <a class="btn-nav-cart" href="#">
+          <i class="bi bi-cart2"></i>
+          <span class="cart-badge">0</span>
+        </a>
+        <a class="btn-nav-cta" href="{% url 'flashcards' %}">🃏 Try for Free</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-blob hb1"></div>
+  <div class="hero-blob hb2"></div>
+  <div class="container position-relative" style="z-index:5;width:100%">
+    <div class="row align-items-center gy-5">
+      <div class="col-lg-7">
+        <div class="hero-tag">🦉 Our Story</div>
+        <h1 class="hero-h">
+          Built with <span class="grad-green">Passion</span>,<br>
+          Designed for <span class="grad-yellow">Little Minds</span>
+        </h1>
+        <p class="hero-p">InfoWall was born from a simple belief — every child deserves to learn in a joyful, natural, and curiosity-driven way. We blend Montessori wisdom with modern technology to make early education truly magical.</p>
+        <a class="hero-btn" href="{% url 'flashcards' %}">🃏 Start Learning Free</a>
+      </div>
+      <div class="col-lg-5 d-flex align-items-center justify-content-center">
+        <div class="hero-logo-wrap">
+          <img src="{% static 'images/infowall_logo.png' %}" alt="InfoWall" class="hero-logo-img">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MISSION & VISION -->
+<section id="mission">
+  <div class="container">
+    <div class="text-center mb-5 reveal">
+      <span class="sec-label" style="background:var(--green-l);color:var(--green-d);border:1px solid rgba(52,199,89,.2)">💡 What We Stand For</span>
+      <h2 class="sec-h">Our <span class="grad-green">Mission</span> &amp; <span class="grad-yellow">Vision</span></h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-6 reveal">
+        <div class="mv-card mission">
+          <span class="mv-icon">🎯</span>
+          <h3>Our Mission</h3>
+          <p>To make early childhood learning irresistible — through beautifully designed flash cards, interactive quizzes, and games that spark genuine curiosity. We believe every child is a natural explorer, and our job is simply to open the right doors.</p>
+        </div>
+      </div>
+      <div class="col-md-6 reveal">
+        <div class="mv-card vision">
+          <span class="mv-icon">🌟</span>
+          <h3>Our Vision</h3>
+          <p>A world where no child dreads learning. We envision InfoWall becoming the trusted learning companion for families across the globe — where children between 2 and 8 years old build a love for knowledge that lasts a lifetime.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STORY -->
+<section id="story">
+  <div class="container">
+    <div class="row align-items-center gy-5">
+      <div class="col-lg-5 reveal">
+        <span class="sec-label" style="background:var(--blue-l);color:var(--blue-d);border:1px solid rgba(2,136,209,.2)">📖 How It All Began</span>
+        <h2 class="sec-h">The <span class="grad-blue">InfoWall</span> Story</h2>
+        <p style="color:var(--gray);line-height:1.85;font-size:.96rem">What started as a passion project in Hyderabad has grown into a platform trusted by thousands of families. We saw children struggling to engage with boring learning materials — and decided to change that completely.</p>
+      </div>
+      <div class="col-lg-7 reveal">
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot" style="background:var(--green)"></div>
+            <div class="tl-year">The Spark</div>
+            <div class="tl-title">A problem worth solving 💡</div>
+            <div class="tl-text">Parents around us struggled to find engaging, safe, and beautiful learning tools for their toddlers. Standard worksheets and rote learning felt outdated and joyless.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="background:var(--yellow-d)"></div>
+            <div class="tl-year">The Build</div>
+            <div class="tl-title">Flash cards come to life 🃏</div>
+            <div class="tl-text">We designed our first set of digital flash cards — Alphabets, Numbers, Colors, Animals. Children responded instantly. Their excitement told us we were on to something special.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="background:var(--coral)"></div>
+            <div class="tl-year">Today</div>
+            <div class="tl-title">Growing every day 🚀</div>
+            <div class="tl-text">InfoWall now covers 6+ learning categories with quizzes, progress tracking, and a parent dashboard — completely free. Next up: AR/VR, mobile apps, and school programs.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUES -->
+<section id="values">
+  <div class="container">
+    <div class="text-center mb-5 reveal">
+      <span class="sec-label" style="background:var(--purple-l);color:var(--purple);border:1px solid rgba(155,89,182,.2)">💜 What Drives Us</span>
+      <h2 class="sec-h">Our Core <span class="grad-yellow">Values</span></h2>
+      <p class="sec-p">Every decision — from design to content — is guided by these principles.</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-sm-6 col-lg-3 reveal">
+        <div class="val-card">
+          <span class="val-ico">🧠</span>
+          <h5>Child-First Design</h5>
+          <p>Every pixel is crafted for a small hand and a curious mind. Simplicity, clarity, and delight are non-negotiable.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3 reveal">
+        <div class="val-card">
+          <span class="val-ico">📵</span>
+          <h5>Screen-Free Spirit</h5>
+          <p>We encourage active thinking over passive consumption. Our tools are designed to eventually move learning off the screen.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3 reveal">
+        <div class="val-card">
+          <span class="val-ico">🌿</span>
+          <h5>Montessori Roots</h5>
+          <p>Child-led discovery, natural pacing, and respect for each child's unique learning journey — woven into everything we build.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3 reveal">
+        <div class="val-card">
+          <span class="val-ico">🔓</span>
+          <h5>Always Free</h5>
+          <p>Quality early education should not be a privilege. Our core platform will always be 100% free for every family, everywhere.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAND -->
+<section id="stats-band">
+  <div class="container">
+    <div class="row g-0 justify-content-center">
+      <div class="col-6 col-sm-3 sb-item reveal"><div class="sb-num">10K+</div><div class="sb-lbl">Happy Families</div></div>
+      <div class="col-6 col-sm-3 sb-item reveal"><div class="sb-num">100+</div><div class="sb-lbl">Flash Cards</div></div>
+      <div class="col-6 col-sm-3 sb-item reveal"><div class="sb-num">6+</div><div class="sb-lbl">Categories</div></div>
+      <div class="col-6 col-sm-3 sb-item reveal"><div class="sb-num">100%</div><div class="sb-lbl">Free Forever</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="container position-relative" style="z-index:2">
+    <h2>Ready to Watch Your Child <span style="color:var(--yellow)">Shine?</span> ✨</h2>
+    <p>Join thousands of families who have made InfoWall their child's favourite learning companion.</p>
+    <div class="cta-btns">
+      <a class="btn-cta-w" href="{% url 'register' %}">🚀 Get Started Free</a>
+      <a class="btn-cta-outline" href="{% url 'contact' %}">💬 Talk to Us</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <div class="footer-brand" style="display:flex;align-items:center;gap:10px">
+          <span style="color:#1B5FAA">I</span><span style="color:#2AB5E8">N</span><span style="color:#3DBF6E">F</span><span style="color:#F05545">O</span><span style="color:#8A3AB9">W</span><span style="color:#F5C234">A</span><span style="color:#F57C22">L</span><span style="color:#8A3AB9">L</span>
+        </div>
+        <div class="footer-tagline">Where little minds grow big &amp; bold.<br>Premium learning for ages 2–8.</div>
+        <div class="footer-social">
+          <a class="fsoc" href="https://wa.me/917989869258" target="_blank" rel="noopener noreferrer"><i class="bi bi-whatsapp"></i></a>
+          <a class="fsoc" href="https://www.instagram.com/infowallflashcards?utm_source=qr&igsh=MTN4ZjdkOHZ3M2szNw==" target="_blank" rel="noopener noreferrer"><i class="bi bi-instagram"></i></a>
+          <a class="fsoc" href="https://www.facebook.com/share/1DVbhN19EZ/" target="_blank" rel="noopener noreferrer"><i class="bi bi-facebook"></i></a>
+          <a class="fsoc" href="#"><i class="bi bi-youtube"></i></a>
+          <a class="fsoc" href="#"><i class="bi bi-twitter-x"></i></a>
+        </div>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6 class="footer-col">Home</h6>
+        <a class="footer-link" href="{% url 'index' %}">Home</a>
+        <a class="footer-link" href="{% url 'index' %}#categories">Categories</a>
+        <a class="footer-link" href="{% url 'about' %}">About</a>
+        <a class="footer-link" href="{% url 'contact' %}">Contact</a>
+        <a class="footer-link" href="{% url 'services' %}">Support</a>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6 class="footer-col">Account</h6>
+        <a class="footer-link" href="{% url 'register' %}">Register</a>
+        <a class="footer-link" href="{% url 'login' %}">Login</a>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6 class="footer-col">Flashcards</h6>
+        <a class="footer-link" href="{% url 'flashcards' %}">Flash Cards</a>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6 class="footer-col">Company</h6>
+        <a class="footer-link" href="{% url 'services' %}">Services</a>
+        <a class="footer-link" href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms &amp; Conditions</a>
+        <a class="footer-link" href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy Policy</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p style="text-align:center;width:100%">© 2026 InfoWall. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach((e,i) => {
+    if(e.isIntersecting){ setTimeout(()=>e.target.classList.add('vis'), i*60); revObs.unobserve(e.target); }
+  });
+},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>revObs.observe(el));
+</script>
+<!-- ═══ PRIVACY POLICY MODAL ═══ -->
+<div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+    <div class="modal-content" style="border-radius:28px;overflow:hidden;font-family:'Nunito',sans-serif">
+      <div class="modal-header" style="background:linear-gradient(135deg,#E1F5FE,#F0FBF1);border-bottom:1.5px solid #E8F0E8;padding:20px 28px">
+        <h5 class="modal-title" id="privacyModalLabel" style="font-family:'Fredoka One',cursive;font-size:1.5rem;color:#1A2332">🔒 Privacy Policy</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="padding:28px 32px;color:#1A2332;font-size:.95rem;line-height:1.85">
+        <p style="background:#F0FBF1;border-radius:12px;padding:10px 16px;font-size:.82rem;color:#1A7A3D;font-weight:700;margin-bottom:24px">📅 Effective Date: <span class="iw-eff-date"></span></p>
+        <p style="margin-bottom:16px">Welcome to <strong>InfoWall</strong>. We are committed to protecting your privacy and ensuring your personal information is handled securely and responsibly.</p>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#1A7A3D;margin:24px 0 10px">1. Information We Collect</h6>
+        <p style="margin-bottom:8px;font-weight:700;color:#1A2332;font-size:.9rem">Personal Information:</p>
+        <ul style="color:#64748B;padding-left:20px;margin-bottom:14px"><li>Full name, mobile number, email address</li><li>Billing and shipping address</li><li>Payment-related details</li><li>Business or school information (if applicable)</li></ul>
+        <p style="margin-bottom:8px;font-weight:700;color:#1A2332;font-size:.9rem">Non-Personal Information:</p>
+        <ul style="color:#64748B;padding-left:20px;margin-bottom:14px"><li>Browser type, device info, IP address</li><li>Operating system and usage statistics</li><li>Cookies and analytics data</li></ul>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#1A7A3D;margin:24px 0 10px">2. How We Use Your Information</h6>
+        <ul style="color:#64748B;padding-left:20px;margin-bottom:14px"><li>Process and fulfill orders</li><li>Provide customer support</li><li>Improve website functionality and user experience</li><li>Send transactional notifications and updates</li><li>Share promotional offers and educational content</li><li>Conduct analytics and prevent fraudulent activities</li></ul>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#1A7A3D;margin:24px 0 10px">3. Payment Information</h6>
+        <p style="color:#64748B;margin-bottom:14px">All payments are processed through secure third-party gateways. InfoWall does <strong>not</strong> store card numbers, CVV details, UPI PINs, or banking passwords.</p>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#1A7A3D;margin:24px 0 10px">4. Cookies &amp; Tracking</h6>
+        <p style="color:#64748B;margin-bottom:14px">We use cookies to enhance browsing, remember preferences, and analyze traffic. You may disable cookies through browser settings; however, some features may not function properly.</p>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#1A7A3D;margin:24px 0 10px">5. Sharing of Information</h6>
+        <p style="color:#64748B;margin-bottom:8px">We do <strong>not</strong> sell, rent, or trade your personal information. Data may be shared only with:</p>
+        <ul style="color:#64748B;padding-left:20px;margin-bottom:14px"><li>Shipping and logistics partners</li><li>Payment gateway providers</li><li>Website and technology service providers</li><li>Legal authorities when required by law</li></ul>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#1A7A3D;margin:24px 0 10px">6. Data Security</h6>
+        <p style="color:#64748B;margin-bottom:14px">We implement commercially reasonable security measures against unauthorized access, misuse, loss, or disclosure.</p>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#1A7A3D;margin:24px 0 10px">7. Children's Privacy</h6>
+        <p style="color:#64748B;margin-bottom:14px">InfoWall products are designed for children under parental or institutional supervision. We do not knowingly collect personal information directly from children.</p>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#1A7A3D;margin:24px 0 10px">8. Third-Party Links</h6>
+        <p style="color:#64748B;margin-bottom:14px">Our website may link to external websites. InfoWall is not responsible for third-party privacy practices.</p>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#1A7A3D;margin:24px 0 10px">9. Marketing Communication</h6>
+        <p style="color:#64748B;margin-bottom:14px">We may send order updates, promotional offers, and educational resources. You may unsubscribe at any time by contacting us.</p>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#1A7A3D;margin:24px 0 10px">10. User Rights</h6>
+        <ul style="color:#64748B;padding-left:20px;margin-bottom:14px"><li>Access to your personal information</li><li>Correction or updating of data</li><li>Deletion of personal information</li><li>Withdrawal of communication preferences</li></ul>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#1A7A3D;margin:24px 0 10px">11. Policy Updates</h6>
+        <p style="color:#64748B;margin-bottom:14px">InfoWall reserves the right to modify this Privacy Policy at any time. Updated versions will be published with a revised effective date.</p>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#1A7A3D;margin:24px 0 10px">12. Contact Us</h6>
+        <div style="background:#F0FBF1;border-radius:14px;padding:18px 22px;border:1px solid rgba(52,199,89,.2);margin-bottom:20px">
+          <p style="margin-bottom:4px;font-weight:800">InfoWall</p>
+          <p style="color:#64748B;font-size:.9rem;margin-bottom:4px">📧 <a href="mailto:support@infowall.in" style="color:#1A7A3D;text-decoration:none;font-weight:700">support@infowall.in</a></p>
+          <p style="color:#64748B;font-size:.9rem;margin:0">📱 <a href="https://instagram.com/infowall.in" target="_blank" style="color:#1A7A3D;text-decoration:none;font-weight:700">@infowall.in</a></p>
+        </div>
+        <p style="font-size:.78rem;color:#94A3B8;text-align:center;border-top:1px solid #E8F0E8;padding-top:16px;margin:0">© 2026 InfoWall. All Rights Reserved. All content, designs, and educational materials are the intellectual property of InfoWall.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ═══ TERMS & CONDITIONS MODAL ═══ -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+    <div class="modal-content" style="border-radius:28px;overflow:hidden;font-family:'Nunito',sans-serif">
+      <div class="modal-header" style="background:linear-gradient(135deg,#FFF8E1,#FFF3E0);border-bottom:1.5px solid #E8F0E8;padding:20px 28px">
+        <h5 class="modal-title" id="termsModalLabel" style="font-family:'Fredoka One',cursive;font-size:1.5rem;color:#1A2332">📜 Terms &amp; Conditions</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="padding:28px 32px;color:#1A2332;font-size:.95rem;line-height:1.85">
+        <p style="background:#FFF8E1;border-radius:12px;padding:10px 16px;font-size:.82rem;color:#F5A623;font-weight:700;margin-bottom:24px">📅 Effective Date: <span class="iw-eff-date"></span></p>
+        <p style="margin-bottom:16px">Welcome to <strong>InfoWall</strong>. By accessing or using our website, purchasing our products, or interacting with our services, you agree to be bound by these Terms &amp; Conditions. Please read them carefully.</p>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#F5A623;margin:24px 0 10px">1. Acceptance of Terms</h6>
+        <p style="color:#64748B;margin-bottom:14px">By using InfoWall's website and services, you confirm that you are at least 18 years old (or have parental/guardian consent) and agree to comply with these Terms and all applicable laws.</p>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#F5A623;margin:24px 0 10px">2. Use of the Platform</h6>
+        <p style="color:#64748B;margin-bottom:8px">You agree to use InfoWall only for lawful purposes. You must not:</p>
+        <ul style="color:#64748B;padding-left:20px;margin-bottom:14px"><li>Violate any applicable local, national, or international laws</li><li>Transmit unsolicited or unauthorized advertising material</li><li>Attempt unauthorized access to any part of our systems</li><li>Use the platform for commercial purposes without our consent</li></ul>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#F5A623;margin:24px 0 10px">3. Account Registration</h6>
+        <ul style="color:#64748B;padding-left:20px;margin-bottom:14px"><li>You are responsible for maintaining account credential confidentiality</li><li>You must provide accurate and complete registration information</li><li>You are responsible for all activities under your account</li><li>Notify us immediately of any unauthorized account use</li></ul>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#F5A623;margin:24px 0 10px">4. Products and Orders</h6>
+        <ul style="color:#64748B;padding-left:20px;margin-bottom:14px"><li>All product descriptions, images, and prices are subject to change</li><li>We reserve the right to refuse or cancel any order at our discretion</li><li>Orders are confirmed only after successful payment verification</li><li>Product availability is not guaranteed and may vary</li></ul>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#F5A623;margin:24px 0 10px">5. Pricing and Payment</h6>
+        <ul style="color:#64748B;padding-left:20px;margin-bottom:14px"><li>All prices are listed in Indian Rupees (INR) and include applicable taxes</li><li>Payments are processed through secure third-party gateways</li><li>InfoWall does not store sensitive payment information</li><li>In case of payment failure, the order will not be processed</li></ul>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#F5A623;margin:24px 0 10px">6. Shipping and Delivery</h6>
+        <ul style="color:#64748B;padding-left:20px;margin-bottom:14px"><li>Delivery timelines are estimates and may vary based on location</li><li>InfoWall is not responsible for delays caused by logistics partners</li><li>Ensure your shipping address is accurate at the time of ordering</li></ul>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#F5A623;margin:24px 0 10px">7. Returns and Refunds</h6>
+        <ul style="color:#64748B;padding-left:20px;margin-bottom:14px"><li>Returns accepted within 7 days of delivery for damaged or defective items</li><li>Items must be unused, in original packaging, with proof of purchase</li><li>Refunds processed within 7–10 business days after approval</li><li>Digital products and customized items are non-refundable</li></ul>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#F5A623;margin:24px 0 10px">8. Intellectual Property</h6>
+        <p style="color:#64748B;margin-bottom:14px">All content on InfoWall — product designs, visuals, educational materials, text, and branding — is the intellectual property of InfoWall. Unauthorized reproduction or distribution without written permission is strictly prohibited.</p>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#F5A623;margin:24px 0 10px">9. Children's Safety</h6>
+        <p style="color:#64748B;margin-bottom:14px">Our products are designed for children aged 2–8 under adult supervision. Parents and guardians are responsible for ensuring appropriate use of InfoWall materials and the digital platform.</p>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#F5A623;margin:24px 0 10px">10. Disclaimers</h6>
+        <p style="color:#64748B;margin-bottom:14px">InfoWall's services are provided "as is" without warranties of any kind. We are not liable for any indirect, incidental, or consequential damages arising from use of our platform or products.</p>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#F5A623;margin:24px 0 10px">11. Modifications to Terms</h6>
+        <p style="color:#64748B;margin-bottom:14px">InfoWall reserves the right to modify these Terms at any time. Continued use of the platform after changes constitutes acceptance of the updated terms.</p>
+        <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#F5A623;margin:24px 0 10px">12. Contact Us</h6>
+        <div style="background:#FFF8E1;border-radius:14px;padding:18px 22px;border:1px solid rgba(245,166,35,.2)">
+          <p style="margin-bottom:4px;font-weight:800">InfoWall</p>
+          <p style="color:#64748B;font-size:.9rem;margin-bottom:4px">📧 <a href="mailto:support@infowall.in" style="color:#F5A623;text-decoration:none;font-weight:700">support@infowall.in</a></p>
+          <p style="color:#64748B;font-size:.9rem;margin:0">📱 <a href="https://instagram.com/infowall.in" target="_blank" style="color:#F5A623;text-decoration:none;font-weight:700">@infowall.in</a></p>
+        </div>
+      </div>
+      <div class="modal-footer" style="border-top:1.5px solid #E8F0E8;padding:20px 32px;flex-direction:column;align-items:stretch;gap:12px">
+        <label style="display:flex;align-items:center;gap:12px;background:#FFF8E1;border:1.5px solid rgba(245,166,35,.35);border-radius:14px;padding:14px 18px;cursor:pointer;margin:0">
+          <input type="radio" name="iw-terms-agree" id="iw-terms-radio" style="width:20px;height:20px;accent-color:#F5A623;cursor:pointer;flex-shrink:0">
+          <span style="font-family:'Nunito',sans-serif;font-weight:800;font-size:.95rem;color:#1A2332">I have read and agree to the Terms &amp; Conditions <span style="color:#F05545">*</span></span>
+        </label>
+        <button type="button" id="iw-terms-accept" disabled style="background:linear-gradient(135deg,#34C759,#1A7A3D);color:#fff;border:none;border-radius:50px;padding:14px;font-family:'Fredoka One',cursive;font-size:1.1rem;width:100%;opacity:.4;cursor:not-allowed;transition:all .3s;box-shadow:none">Accept Terms &amp; Conditions ✓</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+document.querySelectorAll('.iw-eff-date').forEach(function(e){e.textContent=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});});
+(function(){
+  var r=document.getElementById('iw-terms-radio'),b=document.getElementById('iw-terms-accept');
+  if(!r||!b)return;
+  r.addEventListener('change',function(){
+    b.disabled=!this.checked;
+    b.style.opacity=this.checked?'1':'.4';
+    b.style.cursor=this.checked?'pointer':'not-allowed';
+    b.style.boxShadow=this.checked?'0 8px 25px rgba(52,199,89,.35)':'none';
+  });
+  b.addEventListener('click',function(){
+    if(!r.checked)return;
+    var m=bootstrap.Modal.getInstance(document.getElementById('termsModal'));
+    if(m)m.hide();
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Flash Cards – InfoWall</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <style>
+    :root {
+      --purple:  #7c3aed; --purple2: #a78bfa;
+      --pink:    #ec4899; --orange:  #f97316;
+      --yellow:  #fbbf24; --teal:    #14b8a6;
+      --green:   #22c55e; --red:     #ef4444;
+      --blue:    #3b82f6;
+      --bg:      #f5f3ff;
+      --sidebar: #ffffff;
+      --font-h:  'Fredoka One', cursive;
+      --font-b:  'Nunito', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-b); background: var(--bg); color: #1e1b4b; overflow-x: hidden; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      position: fixed; top: 0; left: 0; width: 240px; height: 100vh;
+      background: var(--sidebar); border-right: 1px solid #ede9fe;
+      display: flex; flex-direction: column; z-index: 200;
+      box-shadow: 4px 0 24px rgba(124,58,237,.07); transition: transform .3s ease;
+    }
+    .sb-brand {
+      padding: 22px 24px 18px; font-family: var(--font-h); font-size: 1.6rem;
+      letter-spacing: 1px; font-weight: 800;
+      border-bottom: 1px solid #ede9fe;
+    }
+    .sb-nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+    .sb-link {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 14px; border-radius: 14px;
+      font-weight: 800; font-size: .93rem; color: #64748b;
+      text-decoration: none; transition: all .2s;
+    }
+    .sb-link:hover { background: #f5f3ff; color: var(--purple); }
+    .sb-link.active {
+      background: linear-gradient(135deg,rgba(124,58,237,.12),rgba(236,72,153,.08));
+      color: var(--purple); border: 1px solid rgba(124,58,237,.15);
+    }
+    .sb-link i { font-size: 1.1rem; width: 22px; text-align: center; }
+    .sb-link .lbl { flex: 1; }
+    .sb-footer { padding: 16px 16px 20px; border-top: 1px solid #ede9fe; }
+    .sb-user {
+      display: flex; align-items: center; gap: 10px; padding: 10px;
+      border-radius: 14px; background: #f5f3ff; cursor: pointer;
+      transition: all .2s; text-decoration: none;
+    }
+    .sb-user:hover { background: #ede9fe; }
+    .sb-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: linear-gradient(135deg,var(--purple),var(--pink));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; color: #fff; font-weight: 900; flex-shrink: 0;
+    }
+    .sb-name { font-weight: 800; font-size: .9rem; color: #1e1b4b; }
+    .sb-role { font-size: .72rem; color: #94a3b8; font-weight: 700; }
+
+    /* ── MAIN ── */
+    .main-wrap { margin-left: 240px; min-height: 100vh; transition: margin .3s ease; }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      background: rgba(255,255,255,.85); backdrop-filter: blur(14px);
+      border-bottom: 1px solid #ede9fe; padding: 14px 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .topbar-left h2 { font-family: var(--font-h); font-size: 1.4rem; color: #1e1b4b; }
+    .topbar-left p  { font-size: .83rem; color: #94a3b8; font-weight: 700; margin: 0; }
+    .topbar-right   { display: flex; align-items: center; gap: 12px; }
+    .topbar-icon {
+      width: 38px; height: 38px; border-radius: 12px; border: 1.5px solid #ede9fe;
+      background: #fff; display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; cursor: pointer; color: #64748b; transition: all .2s;
+      text-decoration: none;
+    }
+    .topbar-icon:hover { background: #f5f3ff; color: var(--purple); border-color: #ddd6fe; }
+    .hamburger { display: none; border: none; }
+
+    /* ── PAGE CONTENT ── */
+    .page-content { padding: 28px 32px 48px; }
+
+    /* ── FLASH CARD STYLES ── */
+    .fc-mode-btn {
+      font-family: var(--font-b); font-weight: 800; font-size: .95rem;
+      padding: 10px 28px; border-radius: 50px; border: 2.5px solid transparent;
+      cursor: pointer; transition: all .3s; background: #f1f5f9; color: #64748b;
+    }
+    .fc-mode-btn.fc-active {
+      background: #22c55e; color: #fff; border-color: #22c55e;
+      box-shadow: 0 4px 18px rgba(34,197,94,.3); transform: translateY(-2px);
+    }
+    .fc-cat-btn {
+      font-family: var(--font-b); font-weight: 700; font-size: .85rem;
+      padding: 7px 18px; border-radius: 50px; border: 2px solid #e2e8f0;
+      cursor: pointer; background: #f8fafc; color: #64748b; transition: all .3s;
+    }
+    .fc-cat-btn.fc-cat-active {
+      background: #7c3aed; color: #fff; border-color: #7c3aed;
+      transform: translateY(-2px); box-shadow: 0 4px 14px rgba(124,58,237,.3);
+    }
+    .fc-cat-btn:not(.fc-cat-active):hover { transform: translateY(-1px); border-color: #94a3b8; }
+
+    /* Flip card */
+    .fc-wrap { perspective: 1000px; height: 210px; cursor: pointer; animation: fcPop .5s cubic-bezier(.36,.07,.19,.97) both; }
+    @keyframes fcPop {
+      0%   { opacity:0; transform:scale(.4) translateY(40px); }
+      65%  { opacity:1; transform:scale(1.05) translateY(-3px); }
+      100% { opacity:1; transform:scale(1) translateY(0); }
+    }
+    .fc-inner { width:100%; height:100%; position:relative; transform-style:preserve-3d; transition:transform .7s cubic-bezier(.36,.07,.19,.97); border-radius:20px; }
+    .fc-wrap.fc-flipped .fc-inner { transform:rotateY(180deg); }
+    .fc-face { position:absolute; inset:0; backface-visibility:hidden; border-radius:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:hidden; padding:10px; }
+    .fc-front { background:#fff; border:2.5px solid #e8f8ee; box-shadow:0 4px 20px rgba(52,199,89,.1); transition:all .3s; }
+    .fc-wrap:hover .fc-front { border-color:#34C759; box-shadow:0 10px 32px rgba(52,199,89,.2); }
+    .fc-back { transform:rotateY(180deg); }
+    .fc-key  { font-family:var(--font-h); font-size:4.8rem; line-height:1; background:linear-gradient(135deg,#1A7A3D,#34C759); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+    .fc-hint { font-size:.75rem; color:#9ca3af; margin-top:8px; font-weight:700; }
+    .fc-emoji { font-size:3.4rem; }
+    .fc-word  { font-family:var(--font-h); font-size:1.5rem; margin-top:8px; color:#fff; }
+    .fc-speak { margin-top:8px; background:rgba(255,255,255,.22); border:1.5px solid rgba(255,255,255,.5); border-radius:50px; padding:4px 14px; color:#fff; font-weight:800; font-size:.78rem; cursor:pointer; transition:background .2s; }
+    .fc-speak:hover { background:rgba(255,255,255,.38); }
+    .fback-c0 { background:linear-gradient(145deg,#34C759,#1A7A3D); }
+    .fback-c1 { background:linear-gradient(145deg,#FF6B9D,#E11D48); }
+    .fback-c2 { background:linear-gradient(145deg,#4FC3F7,#0288D1); }
+    .fback-c3 { background:linear-gradient(145deg,#FF8C42,#DC6B00); }
+    .fback-c4 { background:linear-gradient(145deg,#FFD166,#F59E0B); }
+    .fback-c5 { background:linear-gradient(145deg,#7C3AED,#4C1D95); }
+    .fc-q-opt {
+      font-family:var(--font-h); font-size:1.35rem; padding:16px; border-radius:16px;
+      border:2.5px solid #e5e7eb; background:#fafafa; cursor:pointer; transition:all .25s; color:#4b5563;
+    }
+    .fc-q-opt:hover   { border-color:#22c55e; color:#065f46; transform:translateY(-2px); }
+    .fc-q-opt.correct { background:#ecfdf5; border-color:#22c55e; color:#065f46; animation:fcCorrect .4s ease; }
+    .fc-q-opt.wrong   { background:#fef2f2; border-color:#ef4444; color:#991b1b; animation:fcWrong .4s ease; }
+    .fc-q-opt.reveal  { background:#ecfdf5; border-color:#22c55e; color:#065f46; }
+    @keyframes fcCorrect { 0%,100%{transform:scale(1);}  40%{transform:scale(1.1);} }
+    @keyframes fcWrong   { 0%,100%{transform:translateX(0);} 20%{transform:translateX(-7px);} 60%{transform:translateX(7px);} }
+
+    /* ── MOBILE OVERLAY ── */
+    .sidebar-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:190; }
+    .sidebar-overlay.open { display:block; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 991px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main-wrap { margin-left: 0; }
+      .hamburger { display: flex; }
+      .page-content { padding: 20px 20px 40px; }
+      .topbar { padding: 12px 20px; }
+    }
+    @media (max-width: 576px) {
+      .page-content { padding: 16px 14px 36px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-brand"><span style="color:#1B5FAA">I</span><span style="color:#2AB5E8">N</span><span style="color:#3DBF6E">F</span><span style="color:#F05545">O</span><span style="color:#8A3AB9">W</span><span style="color:#F5C234">A</span><span style="color:#F57C22">L</span><span style="color:#8A3AB9">L</span></div>
+  <nav class="sb-nav">
+    <a class="sb-link" href="{% url 'dashboard' %}">
+      <i class="bi bi-grid-fill"></i><span class="lbl">Dashboard</span>
+    </a>
+    <a class="sb-link active" href="{% url 'flashcards_user' %}">
+      <i class="bi bi-collection-fill"></i><span class="lbl">Flash Cards</span>
+    </a>
+    <a class="sb-link" href="{% url 'arwall_page' %}">
+      <i class="bi bi-camera-video-fill"></i><span class="lbl">AR Wall</span>
+    </a>
+    <a class="sb-link" href="{% url 'feedback' %}">
+      <i class="bi bi-chat-dots-fill"></i><span class="lbl">Feedback</span>
+    </a>
+    <a class="sb-link" href="{% url 'profile' %}">
+      <i class="bi bi-person-circle"></i><span class="lbl">Profile</span>
+    </a>
+    <a class="sb-link" href="{% url 'index' %}">
+      <i class="bi bi-box-arrow-left"></i><span class="lbl">Logout</span>
+    </a>
+  </nav>
+  <div class="sb-footer">
+    <a class="sb-user" href="{% url 'profile' %}">
+      <div class="sb-avatar">{{ user.username|first|upper }}</div>
+      <div>
+        <div class="sb-name">{{ user.username }}</div>
+        <div class="sb-role">⭐ {{ db_stars }} Stars Earned</div>
+      </div>
+    </a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main-wrap">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2>🃏 Flash Cards</h2>
+      <p>Flip cards to learn • Quiz yourself • Track progress</p>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-icon hamburger" onclick="openSidebar()"><i class="bi bi-list" style="font-size:1.3rem;"></i></button>
+      <a class="topbar-icon" href="{% url 'dashboard' %}" title="Dashboard"><i class="bi bi-grid-fill"></i></a>
+      <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#ec4899);
+                  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-family:var(--font-h);">
+        {{ user.username|first|upper }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Flash Cards Content -->
+  <div class="page-content">
+
+    <!-- Mode Toggle -->
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+      <button id="fc-learn-btn" class="fc-mode-btn fc-active" onclick="fcSetMode('learn')">📚 Learn</button>
+      <button id="fc-quiz-btn"  class="fc-mode-btn"           onclick="fcSetMode('quiz')">🎯 Quiz Me!</button>
+    </div>
+
+    <!-- Category Tabs -->
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+      <button class="fc-cat-btn fc-cat-active" data-cat="alphabets" onclick="fcSetCat('alphabets')">🔤 Alphabets</button>
+      <button class="fc-cat-btn"               data-cat="numbers"   onclick="fcSetCat('numbers')">🔢 Numbers</button>
+      <button class="fc-cat-btn"               data-cat="colors"    onclick="fcSetCat('colors')">🎨 Colors</button>
+      <button class="fc-cat-btn"               data-cat="animals"   onclick="fcSetCat('animals')">🐾 Animals</button>
+      <button class="fc-cat-btn"               data-cat="fruits"    onclick="fcSetCat('fruits')">🍎 Fruits</button>
+      <button class="fc-cat-btn"               data-cat="shapes"    onclick="fcSetCat('shapes')">🔷 Shapes</button>
+    </div>
+
+    <!-- Progress Bar -->
+    <div style="display:flex;align-items:center;gap:12px;max-width:600px;margin-bottom:20px;">
+      <span style="font-weight:800;font-size:.83rem;color:#64748b;white-space:nowrap;" id="fc-prog-label">0 / 26 seen</span>
+      <div style="flex:1;height:10px;background:#E5E7EB;border-radius:10px;overflow:hidden;">
+        <div id="fc-prog-fill" style="height:100%;background:linear-gradient(90deg,#34C759,#4FC3F7);border-radius:10px;width:0%;transition:width .6s ease;"></div>
+      </div>
+    </div>
+
+    <!-- Learn Grid -->
+    <div id="fc-learn-section">
+      <div id="fc-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:20px;max-width:1100px;"></div>
+    </div>
+
+    <!-- Quiz Section -->
+    <div id="fc-quiz-section" style="display:none;max-width:680px;margin:0 auto;">
+      <div style="background:#fff;border-radius:24px;box-shadow:0 8px 32px rgba(52,199,89,.1);padding:36px 32px;text-align:center;border:2px solid rgba(52,199,89,.12);">
+        <div style="font-size:.88rem;font-weight:800;color:#94a3b8;margin-bottom:10px;letter-spacing:.05em;text-transform:uppercase;" id="fc-q-counter">Question 1 / 5</div>
+        <div style="font-size:6rem;line-height:1;margin:12px 0;" id="fc-q-emoji">🍎</div>
+        <div style="font-family:var(--font-h);font-size:1.45rem;color:#374151;margin-bottom:24px;" id="fc-q-text">What is this?</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;" id="fc-q-options"></div>
+        <div style="margin-top:18px;font-family:var(--font-h);font-size:1.25rem;min-height:36px;" id="fc-q-feedback"></div>
+        <button id="fc-q-next" onclick="fcNextQuestion()"
+          style="display:none;margin-top:18px;padding:12px 36px;background:linear-gradient(135deg,#34C759,#1A7A3D);
+                 color:#fff;font-family:var(--font-h);font-size:1.15rem;border:none;border-radius:50px;cursor:pointer;
+                 box-shadow:0 6px 22px rgba(52,199,89,.4);">Next ➡️</button>
+      </div>
+    </div>
+
+    <!-- Quiz finish modal -->
+    <div id="fc-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(4px);">
+      <div style="background:#fff;border-radius:28px;padding:40px;text-align:center;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.25);border:2px solid rgba(52,199,89,.2);">
+        <div style="font-size:5rem;" id="fc-modal-emoji">🎉</div>
+        <div style="font-family:var(--font-h);font-size:1.9rem;background:linear-gradient(135deg,#1A7A3D,#34C759);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin:12px 0 6px;" id="fc-modal-title">Quiz Complete!</div>
+        <div style="font-size:2.5rem;margin:8px 0;" id="fc-modal-stars">⭐⭐⭐</div>
+        <div style="font-size:1rem;color:#6B7280;font-weight:700;" id="fc-modal-score">You got 4 / 5!</div>
+        <button onclick="fcCloseModal()"
+          style="margin-top:20px;padding:13px 36px;background:linear-gradient(135deg,#34C759,#1A7A3D);color:#fff;border:none;
+                 border-radius:50px;font-family:var(--font-h);font-size:1.15rem;cursor:pointer;box-shadow:0 6px 22px rgba(52,199,89,.4);">Play Again 🔄</button>
+      </div>
+    </div>
+
+  </div><!-- end page-content -->
+</div><!-- end main-wrap -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+/* ── SIDEBAR MOBILE ── */
+function openSidebar()  { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.add('open'); }
+function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('open'); }
+
+/* ── FLASH CARD DATA ── */
+const FC_DATA = {
+  alphabets: [
+    {key:'A',emoji:'🍎',word:'Apple'},   {key:'B',emoji:'🏏', word:'Bat'},
+    {key:'C',emoji:'🐱',word:'Cat'},     {key:'D',emoji:'🐶', word:'Dog'},
+    {key:'E',emoji:'🐘',word:'Elephant'},{key:'F',emoji:'🐟', word:'Fish'},
+    {key:'G',emoji:'🦒',word:'Giraffe'}, {key:'H',emoji:'🏠', word:'House'},
+    {key:'I',emoji:'🍦',word:'Ice Cream'},{key:'J',emoji:'🃏',word:'Joker'},
+    {key:'K',emoji:'🪁',word:'Kite'},    {key:'L',emoji:'🦁', word:'Lion'},
+    {key:'M',emoji:'🐒',word:'Monkey'},  {key:'N',emoji:'📰', word:'Newspaper'},
+    {key:'O',emoji:'🍊',word:'Orange'},  {key:'P',emoji:'🦜', word:'Parrot'},
+    {key:'Q',emoji:'👸',word:'Queen'},   {key:'R',emoji:'🐇', word:'Rabbit'},
+    {key:'S',emoji:'🌟',word:'Star'},    {key:'T',emoji:'🐅', word:'Tiger'},
+    {key:'U',emoji:'☂️',word:'Umbrella'},{key:'V',emoji:'🎻', word:'Violin'},
+    {key:'W',emoji:'🐋',word:'Whale'},   {key:'X',emoji:'🎸', word:'Xylophone'},
+    {key:'Y',emoji:'🪀',word:'Yo-yo'},   {key:'Z',emoji:'🦓', word:'Zebra'},
+  ],
+  numbers: [
+    {key:'1', emoji:'🍎', word:'One'},   {key:'2', emoji:'🦋', word:'Two'},
+    {key:'3', emoji:'⭐', word:'Three'}, {key:'4', emoji:'🌈', word:'Four'},
+    {key:'5', emoji:'🎈', word:'Five'},  {key:'6', emoji:'🎀', word:'Six'},
+    {key:'7', emoji:'🌙', word:'Seven'}, {key:'8', emoji:'🎯', word:'Eight'},
+    {key:'9', emoji:'🌺', word:'Nine'},  {key:'10',emoji:'🔟', word:'Ten'},
+    {key:'11',emoji:'🦊', word:'Eleven'},{key:'12',emoji:'🎂', word:'Twelve'},
+    {key:'13',emoji:'🌍', word:'Thirteen'},{key:'14',emoji:'🌸', word:'Fourteen'},
+    {key:'15',emoji:'🏆', word:'Fifteen'},
+  ],
+  colors: [
+    {key:'🔴',emoji:'🍎', word:'Red'},      {key:'🟠',emoji:'🍊', word:'Orange'},
+    {key:'🟡',emoji:'🌻', word:'Yellow'},   {key:'🟢',emoji:'🌿', word:'Green'},
+    {key:'🔵',emoji:'🌊', word:'Blue'},     {key:'🟣',emoji:'🍇', word:'Purple'},
+    {key:'⚫',emoji:'🖤', word:'Black'},    {key:'⚪',emoji:'🤍', word:'White'},
+    {key:'🩷',emoji:'🌸', word:'Pink'},     {key:'🟤',emoji:'🍫', word:'Brown'},
+    {key:'🩵',emoji:'🧊', word:'Sky Blue'}, {key:'💛',emoji:'🌟', word:'Gold'},
+  ],
+  animals: [
+    {key:'🐶',emoji:'🐶',word:'Dog'},     {key:'🐱',emoji:'🐱',word:'Cat'},
+    {key:'🐰',emoji:'🐰',word:'Rabbit'},  {key:'🦁',emoji:'🦁',word:'Lion'},
+    {key:'🐘',emoji:'🐘',word:'Elephant'},{key:'🐯',emoji:'🐯',word:'Tiger'},
+    {key:'🦒',emoji:'🦒',word:'Giraffe'}, {key:'🦓',emoji:'🦓',word:'Zebra'},
+    {key:'🐻',emoji:'🐻',word:'Bear'},    {key:'🦊',emoji:'🦊',word:'Fox'},
+    {key:'🐸',emoji:'🐸',word:'Frog'},    {key:'🐧',emoji:'🐧',word:'Penguin'},
+    {key:'🦜',emoji:'🦜',word:'Parrot'},  {key:'🐬',emoji:'🐬',word:'Dolphin'},
+  ],
+  fruits: [
+    {key:'🍎',emoji:'🍎',word:'Apple'},      {key:'🍌',emoji:'🍌',word:'Banana'},
+    {key:'🍊',emoji:'🍊',word:'Orange'},     {key:'🍇',emoji:'🍇',word:'Grapes'},
+    {key:'🍓',emoji:'🍓',word:'Strawberry'}, {key:'🍍',emoji:'🍍',word:'Pineapple'},
+    {key:'🥭',emoji:'🥭',word:'Mango'},      {key:'🍒',emoji:'🍒',word:'Cherry'},
+    {key:'🍋',emoji:'🍋',word:'Lemon'},      {key:'🍉',emoji:'🍉',word:'Watermelon'},
+    {key:'🍑',emoji:'🍑',word:'Peach'},      {key:'🥝',emoji:'🥝',word:'Kiwi'},
+  ],
+  shapes: [
+    {key:'⭕',emoji:'⭕',word:'Circle'},    {key:'🔲',emoji:'🔲',word:'Square'},
+    {key:'🔺',emoji:'🔺',word:'Triangle'}, {key:'🔷',emoji:'🔷',word:'Diamond'},
+    {key:'⭐',emoji:'⭐',word:'Star'},     {key:'❤️',emoji:'❤️',word:'Heart'},
+    {key:'⬛',emoji:'⬛',word:'Rectangle'},{key:'🔶',emoji:'🔶',word:'Rhombus'},
+    {key:'🔵',emoji:'🔵',word:'Oval'},     {key:'💠',emoji:'💠',word:'Crystal'},
+  ],
+};
+
+let fcCat = 'alphabets', fcMode = 'learn', fcSeen = new Set();
+let fcQuizItems = [], fcQuizIdx = 0, fcQuizScore = 0, fcAnswered = false;
+
+function fcSetCat(cat) {
+  fcCat = cat;
+  document.querySelectorAll('.fc-cat-btn').forEach(b => b.classList.toggle('fc-cat-active', b.dataset.cat === cat));
+  if (fcMode === 'learn') fcRenderCards(); else fcStartQuiz();
+}
+function fcSetMode(mode) {
+  fcMode = mode;
+  document.getElementById('fc-learn-btn').classList.toggle('fc-active', mode === 'learn');
+  document.getElementById('fc-quiz-btn').classList.toggle('fc-active', mode === 'quiz');
+  document.getElementById('fc-learn-section').style.display = mode === 'learn' ? '' : 'none';
+  document.getElementById('fc-quiz-section').style.display  = mode === 'quiz'  ? '' : 'none';
+  if (mode === 'learn') fcRenderCards(); else fcStartQuiz();
+}
+function fcRenderCards() {
+  const grid = document.getElementById('fc-cards-grid');
+  grid.innerHTML = '';
+  FC_DATA[fcCat].forEach((item, idx) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'fc-wrap';
+    wrap.style.animationDelay = (idx * 0.08) + 's';
+    const cc = 'fback-c' + (idx % 6);
+    wrap.innerHTML = `
+      <div class="fc-inner">
+        <div class="fc-face fc-front">
+          <div class="fc-key">${item.key}</div>
+          <div class="fc-hint">👆 Tap to flip!</div>
+        </div>
+        <div class="fc-face fc-back ${cc}">
+          <div class="fc-emoji">${item.emoji}</div>
+          <div class="fc-word">${item.word}</div>
+          <button class="fc-speak" onclick="event.stopPropagation();fcSpeak('${item.word}')">🔊 Speak</button>
+        </div>
+      </div>`;
+    wrap.addEventListener('click', () => {
+      const inner = wrap.querySelector('.fc-inner');
+      inner.style.transform = '';
+      const wasFlipped = wrap.classList.contains('fc-flipped');
+      wrap.classList.toggle('fc-flipped');
+      if (!wasFlipped) { fcSeen.add(fcCat+'_'+idx); fcSpeak(item.word); fcUpdateProgress(); }
+    });
+    const inner = wrap.querySelector('.fc-inner');
+    wrap.addEventListener('mousemove', e => {
+      if (wrap.classList.contains('fc-flipped')) return;
+      const r = wrap.getBoundingClientRect();
+      inner.style.transform = `rotateX(${((e.clientY-r.top-r.height/2)/(r.height/2))*-8}deg) rotateY(${((e.clientX-r.left-r.width/2)/(r.width/2))*8}deg)`;
+    });
+    wrap.addEventListener('mouseleave', () => { if (!wrap.classList.contains('fc-flipped')) inner.style.transform = ''; });
+    grid.appendChild(wrap);
+  });
+  fcUpdateProgress();
+}
+function fcUpdateProgress() {
+  const total = FC_DATA[fcCat].length;
+  const seen  = [...fcSeen].filter(k => k.startsWith(fcCat + '_')).length;
+  document.getElementById('fc-prog-fill').style.width  = Math.round((seen/total)*100) + '%';
+  document.getElementById('fc-prog-label').textContent = seen + ' / ' + total + ' seen';
+}
+function fcStartQuiz() {
+  fcQuizItems = fcShuffle([...FC_DATA[fcCat]]);
+  fcQuizIdx = 0; fcQuizScore = 0; fcShowQuestion();
+}
+function fcQuizConfig(cat, item) {
+  switch (cat) {
+    case 'alphabets': return { displayEmoji: item.emoji, question: 'Which letter does this picture start with? 🔤', getLabel: o => o.key };
+    case 'numbers':   return { displayEmoji: item.key,   question: 'What is the word for this number? 🔢',          getLabel: o => o.word };
+    case 'colors':    return { displayEmoji: item.key,   question: 'What color is this? 🎨',                        getLabel: o => o.word };
+    case 'animals':   return { displayEmoji: item.emoji, question: 'What animal is this? 🐾',                       getLabel: o => o.word };
+    case 'fruits':    return { displayEmoji: item.emoji, question: 'Which fruit is this? 🍓',                       getLabel: o => o.word };
+    case 'shapes':    return { displayEmoji: item.emoji, question: 'What shape is this? 🔷',                        getLabel: o => o.word };
+    default:          return { displayEmoji: item.emoji, question: 'What is this?',                                 getLabel: o => o.word };
+  }
+}
+function fcShowQuestion() {
+  fcAnswered = false;
+  const item = fcQuizItems[fcQuizIdx];
+  const cfg  = fcQuizConfig(fcCat, item);
+  document.getElementById('fc-q-counter').textContent = `Question ${fcQuizIdx+1} / ${fcQuizItems.length}`;
+  document.getElementById('fc-q-emoji').textContent    = cfg.displayEmoji;
+  document.getElementById('fc-q-text').textContent     = cfg.question;
+  document.getElementById('fc-q-feedback').textContent = '';
+  document.getElementById('fc-q-next').style.display   = 'none';
+  const opts = fcShuffle([item, ...fcShuffle(FC_DATA[fcCat].filter(x => x.key !== item.key)).slice(0,3)]);
+  const optsDiv = document.getElementById('fc-q-options');
+  optsDiv.innerHTML = '';
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'fc-q-opt'; btn.textContent = cfg.getLabel(opt); btn.dataset.key = opt.key;
+    btn.onclick = () => fcAnswer(btn, item.key);
+    optsDiv.appendChild(btn);
+  });
+}
+function fcAnswer(btn, correctKey) {
+  if (fcAnswered) return; fcAnswered = true;
+  const fb = document.getElementById('fc-q-feedback');
+  if (btn.dataset.key === correctKey) {
+    btn.classList.add('correct'); fb.textContent = '🎉 Correct! Well done!'; fb.style.color = '#065f46'; fcQuizScore++;
+  } else {
+    btn.classList.add('wrong'); fb.textContent = '❌ Oops!'; fb.style.color = '#991b1b';
+    document.querySelectorAll('.fc-q-opt').forEach(b => { if (b.dataset.key === correctKey) b.classList.add('reveal'); });
+  }
+  document.getElementById('fc-q-next').style.display = 'inline-block';
+}
+function fcNextQuestion() {
+  fcQuizIdx++;
+  if (fcQuizIdx >= fcQuizItems.length) {
+    const pct = fcQuizScore / fcQuizItems.length;
+    const getCookie = (name) => {
+      let v = null;
+      if (document.cookie) {
+        document.cookie.split(';').forEach(c => {
+          c = c.trim();
+          if (c.startsWith(name + '=')) v = decodeURIComponent(c.substring(name.length + 1));
+        });
+      }
+      return v;
+    };
+    fetch('/save-quiz-result/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+      body: JSON.stringify({ category: fcCat, total: fcQuizItems.length, score: fcQuizScore })
+    }).catch(err => console.error(err));
+    document.getElementById('fc-modal-stars').textContent = pct >= .8 ? '⭐⭐⭐' : pct >= .6 ? '⭐⭐' : '⭐';
+    document.getElementById('fc-modal-score').textContent = `You got ${fcQuizScore} / ${fcQuizItems.length} correct!`;
+    document.getElementById('fc-modal-title').textContent = pct === 1 ? 'Perfect! 🌟' : pct >= .6 ? 'Great Job! 🎊' : 'Keep Going! 💪';
+    document.getElementById('fc-modal').style.display = 'flex';
+  } else {
+    fcShowQuestion();
+  }
+}
+function fcCloseModal() { document.getElementById('fc-modal').style.display = 'none'; fcStartQuiz(); }
+function fcSpeak(text) {
+  if (!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text); utt.rate = 0.85; utt.pitch = 1.2;
+  window.speechSynthesis.speak(utt);
+}
+function fcShuffle(arr) {
+  for (let i=arr.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+  return arr;
+}
+
+/* ── URL PARAM: open specific category on load ── */
+(function() {
+  const cat = new URLSearchParams(window.location.search).get('cat');
+  if (cat && FC_DATA[cat]) fcSetCat(cat);
+  else fcRenderCards();
+})();
+</script>
+</body>
+</html>

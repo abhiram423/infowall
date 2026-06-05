@@ -1,0 +1,23 @@
+from django.urls import path
+from mainapp import views
+from userapp import views as user_views
+
+urlpatterns = [
+    path('', views.index, name='index'),
+    path('flashcards/', views.flashcards, name='flashcards'),
+    path('about/', views.about, name='about'),
+    path('contact/', views.contact, name='contact'),
+    path('services/', views.services, name='services'),
+    path('register/', views.register, name='register'),
+    path('login/', views.login, name='login'),
+    path('arwall-page/', views.arwall_page, name='arwall_page'),
+    path('forget-password/', views.forget_password, name='forget_password'),
+    path('reset-password/<str:token>/', views.reset_password, name='reset_password'),
+    path('dashboard/', user_views.dashboard, name='dashboard'),
+    path('feedback/', user_views.feedback, name='feedback'),
+    path('profile/', user_views.profile, name='profile'),
+    path('flashcards-user/', user_views.flashcards_user, name='flashcards_user'),
+    path('save-quiz-result/', user_views.save_quiz_result, name='save_quiz_result'),
+    path('shop/', views.shop, name='shop'),
+
+]
