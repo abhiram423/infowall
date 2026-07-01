@@ -19,5 +19,9 @@ urlpatterns = [
     path('flashcards-user/', user_views.flashcards_user, name='flashcards_user'),
     path('save-quiz-result/', user_views.save_quiz_result, name='save_quiz_result'),
     path('shop/', views.shop, name='shop'),
+    path('cart/', user_views.cart, name='cart'),
+    path('add-to-cart/<int:product_id>/', user_views.add_to_cart, name='add_to_cart'),
+    path('remove-from-cart/<int:cart_id>/', user_views.remove_from_cart, name='remove_from_cart'),
+    path('logout/', views.logout_view, name='logout'),
 
 ]

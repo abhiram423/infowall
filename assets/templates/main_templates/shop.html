@@ -194,6 +194,152 @@
       .prod-img { width: 100%; height: 180px; font-size: 5rem; }
       .shop-header h1 { font-size: 1.6rem; }
     }
+    /* ── IMPROVED PREMIUM PRODUCT CARD GRID ── */
+    #productList {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+      padding: 10px 0;
+    }
+
+    .product-card {
+      background: #ffffff;
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(52, 199, 89, 0.12);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 36px rgba(52, 199, 89, 0.12);
+      border-color: rgba(52, 199, 89, 0.3);
+    }
+
+    .product-card.hidden { display: none !important; }
+
+    /* Premium Image Wrapper */
+    .prod-img-box {
+      position: relative;
+      width: 100%;
+      height: 220px;
+      background: linear-gradient(135deg, #f4fbf6 0%, #fffdf7 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+    }
+
+    .prod-img-box img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 12px;
+      transition: transform 0.3s ease;
+    }
+
+    .product-card:hover .prod-img-box img {
+      transform: scale(1.05);
+    }
+
+    /* Category Floating Badge */
+    .floating-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(8px);
+      color: var(--green-d);
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 30px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      text-transform: capitalize;
+      border: 1px solid rgba(52, 199, 89, 0.15);
+    }
+
+    /* Info Details Block */
+    .prod-details {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .prod-title {
+      font-family: var(--fh);
+      font-size: 1.25rem;
+      color: var(--dark);
+      margin-bottom: 12px;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      height: 3.5rem; /* Keeps layout perfectly uniform */
+    }
+
+    /* Price tag UI */
+    .price-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      margin-top: auto; /* Pushes price and button to bottom uniformly */
+    }
+
+    .price-now {
+      font-family: var(--fh);
+      font-size: 1.5rem;
+      color: var(--dark);
+      font-weight: 800;
+    }
+
+    .currency-symbol {
+      font-size: 1.1rem;
+      color: var(--green-d);
+      margin-right: 2px;
+    }
+
+    /* Premium Button Styles */
+    .btn-cart-container {
+      width: 100%;
+    }
+
+    .btn-cart {
+      width: 100%;
+      background: linear-gradient(135deg, var(--green), var(--green-d));
+      color: #ffffff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-family: var(--fb);
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(52, 199, 89, 0.2);
+    }
+
+    .btn-cart:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(52, 199, 89, 0.35);
+      color: #ffffff;
+    }
+
+    .btn-cart:active {
+      transform: translateY(0);
+    }
   </style>
 </head>
 <body>
@@ -243,20 +389,22 @@
           🏪 All Products
         </button>
         <ul class="dropdown-menu cat-dropdown-menu" aria-labelledby="categoryDropdown">
-          <li><a class="dropdown-item active" href="#" data-cat="all">🏪 All Products</a></li>
+          <li><a class="dropdown-item active" href="#" data-cat="all">🏪 All Products({{ total_products }})</a></li>
           <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" href="#" data-cat="alphabets">🔤 Alphabets</a></li>
-          <li><a class="dropdown-item" href="#" data-cat="numbers">🔢 Numbers</a></li>
-          <li><a class="dropdown-item" href="#" data-cat="colors">🎨 Colors</a></li>
-          <li><a class="dropdown-item" href="#" data-cat="animals">🦁 Animals</a></li>
-          <li><a class="dropdown-item" href="#" data-cat="fruits">🍎 Fruits</a></li>
-          <li><a class="dropdown-item" href="#" data-cat="shapes">🔷 Shapes</a></li>
-          <li><a class="dropdown-item" href="#" data-cat="sightwords">👁️ Sight Words</a></li>
-          <li><a class="dropdown-item" href="#" data-cat="math">➕ Math</a></li>
-          <li><a class="dropdown-item" href="#" data-cat="combo">🎁 Combo Packs</a></li>
+          {% for category in categories %}
+          <li>
+              <a class="dropdown-item"
+                href="#"
+                data-cat="{{ category|lower }}">
+                  {{ category }}
+              </a>
+          </li>
+          {% endfor %}
         </ul>
       </div>
-      <span class="active-label" id="activeLabel">All 14 products</span>
+       <span class="active-label" id="activeLabel">
+        All {{ total_products }} products
+       </span>
     </div>
   </div>
 </div>
@@ -265,442 +413,51 @@
 <section class="products-section">
   <div class="container">
 
-    <div class="results-bar">
-      <span class="results-count" id="resultsCount">Showing all 14 products</span>
+     <div class="results-bar">
+      <span class="results-count" id="resultsCount">
+          Showing {{ total_products }} products
+      </span>
+    </div>    
+
+   <div id="productList">
+      {% for product in products %}
+      <div class="product-card" data-cat="{{ product.category|lower }}">
+          
+          <div class="prod-img-box">
+              {% if product.category %}
+                <span class="floating-badge">✨ {{ product.category }}</span>
+              {% endif %}
+              
+              {% if product.image %}
+                  <img src="{{ product.image.url }}" alt="{{ product.name }}">
+              {% else %}
+                  <span style="font-size: 4rem;">🃏</span>
+              {% endif %}
+          </div>
+
+          <div class="prod-details">
+              <div class="prod-title">
+                  {{ product.name }}
+              </div>
+
+              <div class="price-container">
+                  <span class="price-now">
+                      <span class="currency-symbol">₹</span>{{ product.price }}
+                  </span>
+              </div>
+
+              <div class="btn-cart-container">
+                  <form action="{% url 'add_to_cart' product.id %}" method="POST">
+                      {% csrf_token %}
+                      <button type="submit" class="btn-cart">
+                          <i class="bi bi-cart-plus-fill"></i> Add To Cart
+                      </button>
+                  </form>
+              </div>
+          </div>
+      </div>
+      {% endfor %}
     </div>
-
-    <div id="productList">
-
-      <!-- ─── ALPHABETS ─── -->
-      <div class="product-card" data-cat="alphabets">
-        <div class="prod-img">🔤</div>
-        <div class="prod-info">
-          <div class="prod-badges">
-            <span class="badge-cat">Alphabets</span>
-            <span class="badge-age">Ages 2–4</span>
-            <span class="badge-cards">26 Cards</span>
-          </div>
-          <div class="prod-title">Animal Alphabet Flash Cards</div>
-          <div class="prod-subtitle">Uppercase &amp; Lowercase Letter Recognition with Animal Illustrations</div>
-          <div class="prod-by">by <span>InfoWall</span> (Author)</div>
-          <div class="prod-rating">
-            <span class="stars">★★★★★</span>
-            <span class="rating-num">4.8</span>
-            <span class="rating-cnt">(95 ratings)</span>
-          </div>
-          <div class="save-chip">🏷️ <strong>Save Extra</strong> — Buy 2 Get 10% Off</div>
-          <div class="price-row">
-            <span class="price-now">₹399</span>
-            <span class="price-orig">₹599</span>
-            <span class="price-off">33% OFF</span>
-          </div>
-          <div class="prod-desc">Wipe-clean, double-sided cards featuring A–Z with adorable animals. Includes uppercase, lowercase, phonics hints &amp; tracing guides. Laminated &amp; durable — reuse endlessly!</div>
-          <div class="prod-actions">
-            <button class="btn-cart" onclick="addToCart(this,'Animal Alphabet Flash Cards')"><i class="bi bi-cart-plus"></i> Add to Cart</button>
-            <button class="btn-wish" onclick="toggleWish(this)"><i class="bi bi-heart"></i> Wishlist</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="product-card" data-cat="alphabets">
-        <div class="prod-img">📝</div>
-        <div class="prod-info">
-          <div class="prod-badges">
-            <span class="badge-cat">Alphabets</span>
-            <span class="badge-age">Ages 3–6</span>
-            <span class="badge-cards">30 Cards</span>
-          </div>
-          <div class="prod-title">Wipe &amp; Learn Alphabet Cards</div>
-          <div class="prod-subtitle">Double-Sided Wipe-Clean Cards with Free Marker Pen Included</div>
-          <div class="prod-by">by <span>InfoWall</span> (Author)</div>
-          <div class="prod-rating">
-            <span class="stars">★★★★½</span>
-            <span class="rating-num">4.5</span>
-            <span class="rating-cnt">(67 ratings)</span>
-          </div>
-          <div class="save-chip">🏷️ <strong>Free Marker Pen</strong> included with every order</div>
-          <div class="price-row">
-            <span class="price-now">₹499</span>
-            <span class="price-orig">₹699</span>
-            <span class="price-off">29% OFF</span>
-          </div>
-          <div class="prod-desc">30 premium laminated cards for writing practice. Wipe clean and reuse endlessly! Perfect for preschool letter formation and early handwriting preparation.</div>
-          <div class="prod-actions">
-            <button class="btn-cart" onclick="addToCart(this,'Wipe & Learn Alphabet Cards')"><i class="bi bi-cart-plus"></i> Add to Cart</button>
-            <button class="btn-wish" onclick="toggleWish(this)"><i class="bi bi-heart"></i> Wishlist</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ─── NUMBERS ─── -->
-      <div class="product-card" data-cat="numbers math">
-        <div class="prod-img">🔢</div>
-        <div class="prod-info">
-          <div class="prod-badges">
-            <span class="badge-cat">Numbers</span>
-            <span class="badge-age">Ages 4–7</span>
-            <span class="badge-cards">60 Cards</span>
-          </div>
-          <div class="prod-title">Math Starter Kit</div>
-          <div class="prod-subtitle">Numbers, Counting, Addition &amp; Subtraction Flash Cards</div>
-          <div class="prod-by">by <span>InfoWall</span> (Author)</div>
-          <div class="prod-rating">
-            <span class="stars">★★★★★</span>
-            <span class="rating-num">4.7</span>
-            <span class="rating-cnt">(73 ratings)</span>
-          </div>
-          <div class="save-chip">🏷️ <strong>#1 Best Seller</strong> in Educational Math Toys</div>
-          <div class="price-row">
-            <span class="price-now">₹699</span>
-            <span class="price-orig">₹999</span>
-            <span class="price-off">30% OFF</span>
-          </div>
-          <div class="prod-desc">Comprehensive 60-card math kit covering 1–100 number recognition, basic addition, subtraction, and counting exercises. Designed by certified educators for school readiness.</div>
-          <div class="prod-actions">
-            <button class="btn-cart" onclick="addToCart(this,'Math Starter Kit')"><i class="bi bi-cart-plus"></i> Add to Cart</button>
-            <button class="btn-wish" onclick="toggleWish(this)"><i class="bi bi-heart"></i> Wishlist</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="product-card" data-cat="numbers">
-        <div class="prod-img">🔟</div>
-        <div class="prod-info">
-          <div class="prod-badges">
-            <span class="badge-cat">Numbers</span>
-            <span class="badge-age">Ages 2–5</span>
-            <span class="badge-cards">40 Cards</span>
-          </div>
-          <div class="prod-title">Number &amp; Counting Cards</div>
-          <div class="prod-subtitle">1–20 Number Recognition with Fun Counting Illustrations</div>
-          <div class="prod-by">by <span>InfoWall</span> (Author)</div>
-          <div class="prod-rating">
-            <span class="stars">★★★★½</span>
-            <span class="rating-num">4.6</span>
-            <span class="rating-cnt">(52 ratings)</span>
-          </div>
-          <div class="save-chip">🏷️ <strong>Save Extra</strong> with 2 offers</div>
-          <div class="price-row">
-            <span class="price-now">₹449</span>
-            <span class="price-orig">₹649</span>
-            <span class="price-off">31% OFF</span>
-          </div>
-          <div class="prod-desc">Bright, colorful number cards that make counting fun! Each card shows the numeral, number word, and a counting illustration with dots and real-world objects.</div>
-          <div class="prod-actions">
-            <button class="btn-cart" onclick="addToCart(this,'Number & Counting Cards')"><i class="bi bi-cart-plus"></i> Add to Cart</button>
-            <button class="btn-wish" onclick="toggleWish(this)"><i class="bi bi-heart"></i> Wishlist</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ─── COLORS ─── -->
-      <div class="product-card" data-cat="colors">
-        <div class="prod-img">🎨</div>
-        <div class="prod-info">
-          <div class="prod-badges">
-            <span class="badge-cat">Colors</span>
-            <span class="badge-age">Ages 2–5</span>
-            <span class="badge-cards">30 Cards</span>
-          </div>
-          <div class="prod-title">Colours &amp; Shades Flash Cards</div>
-          <div class="prod-subtitle">Primary, Secondary &amp; Mixed Colours with Real-World Examples</div>
-          <div class="prod-by">by <span>InfoWall</span> (Author)</div>
-          <div class="prod-rating">
-            <span class="stars">★★★★</span>
-            <span class="rating-num">4.4</span>
-            <span class="rating-cnt">(38 ratings)</span>
-          </div>
-          <div class="save-chip">🏷️ <strong>Save Extra</strong> with 2 offers</div>
-          <div class="price-row">
-            <span class="price-now">₹349</span>
-            <span class="price-orig">₹549</span>
-            <span class="price-off">36% OFF</span>
-          </div>
-          <div class="prod-desc">30 beautiful colour recognition cards showing unique shades with everyday object associations. Helps toddlers identify and name colours confidently.</div>
-          <div class="prod-actions">
-            <button class="btn-cart" onclick="addToCart(this,'Colours & Shades Flash Cards')"><i class="bi bi-cart-plus"></i> Add to Cart</button>
-            <button class="btn-wish" onclick="toggleWish(this)"><i class="bi bi-heart"></i> Wishlist</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ─── ANIMALS ─── -->
-      <div class="product-card" data-cat="animals">
-        <div class="prod-img">🦁</div>
-        <div class="prod-info">
-          <div class="prod-badges">
-            <span class="badge-cat">Animals</span>
-            <span class="badge-age">Ages 2–5</span>
-            <span class="badge-cards">100 Cards</span>
-          </div>
-          <div class="prod-title">Animal Flash Cards — Mega Pack</div>
-          <div class="prod-subtitle">Wild, Farm, Ocean &amp; Jungle Animals with Fun Facts</div>
-          <div class="prod-by">by <span>InfoWall</span> (Author)</div>
-          <div class="prod-rating">
-            <span class="stars">★★★★★</span>
-            <span class="rating-num">4.8</span>
-            <span class="rating-cnt">(128 ratings)</span>
-          </div>
-          <div class="save-chip">🏷️ <strong>#1 Best Seller</strong> in Children's Flash Cards</div>
-          <div class="price-row">
-            <span class="price-now">₹499</span>
-            <span class="price-orig">₹699</span>
-            <span class="price-off">29% OFF</span>
-          </div>
-          <div class="prod-desc">Our most popular pack! 100 illustrated animal cards covering wild, farm, ocean, and jungle animals. Each card includes the animal name, habitat, sound &amp; fun fact.</div>
-          <div class="prod-actions">
-            <button class="btn-cart" onclick="addToCart(this,'Animal Flash Cards — Mega Pack')"><i class="bi bi-cart-plus"></i> Add to Cart</button>
-            <button class="btn-wish" onclick="toggleWish(this)"><i class="bi bi-heart"></i> Wishlist</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="product-card" data-cat="animals">
-        <div class="prod-img">🐘</div>
-        <div class="prod-info">
-          <div class="prod-badges">
-            <span class="badge-cat">Animals</span>
-            <span class="badge-age">Ages 3–6</span>
-            <span class="badge-cards">40 Cards</span>
-          </div>
-          <div class="prod-title">Wild Animals Discovery Pack</div>
-          <div class="prod-subtitle">Safari &amp; Jungle Animals with Habitat &amp; Sound Cards</div>
-          <div class="prod-by">by <span>InfoWall</span> (Author)</div>
-          <div class="prod-rating">
-            <span class="stars">★★★★</span>
-            <span class="rating-num">4.3</span>
-            <span class="rating-cnt">(29 ratings)</span>
-          </div>
-          <div class="save-chip">🏷️ <strong>Save Extra</strong> with 2 offers</div>
-          <div class="price-row">
-            <span class="price-now">₹349</span>
-            <span class="price-orig">₹499</span>
-            <span class="price-off">30% OFF</span>
-          </div>
-          <div class="prod-desc">Explore the wild with 40 beautifully illustrated safari and jungle animal cards. Each card features the animal's name, habitat, diet &amp; an interesting fact for young explorers.</div>
-          <div class="prod-actions">
-            <button class="btn-cart" onclick="addToCart(this,'Wild Animals Discovery Pack')"><i class="bi bi-cart-plus"></i> Add to Cart</button>
-            <button class="btn-wish" onclick="toggleWish(this)"><i class="bi bi-heart"></i> Wishlist</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ─── FRUITS ─── -->
-      <div class="product-card" data-cat="fruits">
-        <div class="prod-img">🍎</div>
-        <div class="prod-info">
-          <div class="prod-badges">
-            <span class="badge-cat">Fruits</span>
-            <span class="badge-age">Ages 2–5</span>
-            <span class="badge-cards">50 Cards</span>
-          </div>
-          <div class="prod-title">Fruits &amp; Vegetables Flash Cards</div>
-          <div class="prod-subtitle">Colorful Illustrated Cards for Healthy Eating Awareness</div>
-          <div class="prod-by">by <span>InfoWall</span> (Author)</div>
-          <div class="prod-rating">
-            <span class="stars">★★★★½</span>
-            <span class="rating-num">4.5</span>
-            <span class="rating-cnt">(44 ratings)</span>
-          </div>
-          <div class="save-chip">🏷️ <strong>Save Extra</strong> with 3 offers</div>
-          <div class="price-row">
-            <span class="price-now">₹399</span>
-            <span class="price-orig">₹599</span>
-            <span class="price-off">33% OFF</span>
-          </div>
-          <div class="prod-desc">50 vibrant cards featuring fruits and vegetables from around the world. Teaches names, colours, and nutrition facts in a fun, engaging way for toddlers and young children.</div>
-          <div class="prod-actions">
-            <button class="btn-cart" onclick="addToCart(this,'Fruits & Vegetables Flash Cards')"><i class="bi bi-cart-plus"></i> Add to Cart</button>
-            <button class="btn-wish" onclick="toggleWish(this)"><i class="bi bi-heart"></i> Wishlist</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="product-card" data-cat="fruits">
-        <div class="prod-img">🍓</div>
-        <div class="prod-info">
-          <div class="prod-badges">
-            <span class="badge-cat">Fruits</span>
-            <span class="badge-age">Ages 2–4</span>
-            <span class="badge-cards">25 Cards</span>
-          </div>
-          <div class="prod-title">My First Fruits Cards</div>
-          <div class="prod-subtitle">Simple &amp; Bold Fruit Illustrations Designed for Toddlers</div>
-          <div class="prod-by">by <span>InfoWall</span> (Author)</div>
-          <div class="prod-rating">
-            <span class="stars">★★★★</span>
-            <span class="rating-num">4.2</span>
-            <span class="rating-cnt">(21 ratings)</span>
-          </div>
-          <div class="save-chip">🏷️ <strong>Great for Beginners</strong> — Perfect starter pack</div>
-          <div class="price-row">
-            <span class="price-now">₹249</span>
-            <span class="price-orig">₹399</span>
-            <span class="price-off">38% OFF</span>
-          </div>
-          <div class="prod-desc">Simple, large-print fruit cards designed for toddlers. Bold illustrations and easy words help little ones learn the names of their favorite fruits quickly and joyfully.</div>
-          <div class="prod-actions">
-            <button class="btn-cart" onclick="addToCart(this,'My First Fruits Cards')"><i class="bi bi-cart-plus"></i> Add to Cart</button>
-            <button class="btn-wish" onclick="toggleWish(this)"><i class="bi bi-heart"></i> Wishlist</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ─── SHAPES ─── -->
-      <div class="product-card" data-cat="shapes">
-        <div class="prod-img">🔷</div>
-        <div class="prod-info">
-          <div class="prod-badges">
-            <span class="badge-cat">Shapes</span>
-            <span class="badge-age">Ages 2–4</span>
-            <span class="badge-cards">35 Cards</span>
-          </div>
-          <div class="prod-title">Shapes &amp; Patterns Flash Cards</div>
-          <div class="prod-subtitle">2D &amp; 3D Shapes with Pattern Recognition Cards</div>
-          <div class="prod-by">by <span>InfoWall</span> (Author)</div>
-          <div class="prod-rating">
-            <span class="stars">★★★★</span>
-            <span class="rating-num">4.2</span>
-            <span class="rating-cnt">(31 ratings)</span>
-          </div>
-          <div class="save-chip">🏷️ <strong>Save Extra</strong> with 2 offers</div>
-          <div class="price-row">
-            <span class="price-now">₹299</span>
-            <span class="price-orig">₹449</span>
-            <span class="price-off">33% OFF</span>
-          </div>
-          <div class="prod-desc">35 cards covering basic shapes (circle, square, triangle) to advanced shapes (hexagon, octagon) and patterns. Each card shows real-world examples of the shape in everyday life.</div>
-          <div class="prod-actions">
-            <button class="btn-cart" onclick="addToCart(this,'Shapes & Patterns Flash Cards')"><i class="bi bi-cart-plus"></i> Add to Cart</button>
-            <button class="btn-wish" onclick="toggleWish(this)"><i class="bi bi-heart"></i> Wishlist</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ─── SIGHT WORDS ─── -->
-      <div class="product-card" data-cat="sightwords">
-        <div class="prod-img">👁️</div>
-        <div class="prod-info">
-          <div class="prod-badges">
-            <span class="badge-cat">Sight Words</span>
-            <span class="badge-age">Ages 4–7</span>
-            <span class="badge-cards">100 Cards</span>
-          </div>
-          <div class="prod-title">Sight Words Cards — Complete Set</div>
-          <div class="prod-subtitle">Dolch &amp; Fry High-Frequency Words for Early Readers</div>
-          <div class="prod-by">by <span>InfoWall</span> (Author)</div>
-          <div class="prod-rating">
-            <span class="stars">★★★★½</span>
-            <span class="rating-num">4.7</span>
-            <span class="rating-cnt">(64 ratings)</span>
-          </div>
-          <div class="save-chip">🏷️ <strong>Teacher's Pick</strong> — School Ready</div>
-          <div class="price-row">
-            <span class="price-now">₹499</span>
-            <span class="price-orig">₹699</span>
-            <span class="price-off">29% OFF</span>
-          </div>
-          <div class="prod-desc">Master the 100 most common sight words used in reading. Includes Dolch words, Fry words, and sentence examples for context. Ideal for school readiness and early literacy.</div>
-          <div class="prod-actions">
-            <button class="btn-cart" onclick="addToCart(this,'Sight Words Cards — Complete Set')"><i class="bi bi-cart-plus"></i> Add to Cart</button>
-            <button class="btn-wish" onclick="toggleWish(this)"><i class="bi bi-heart"></i> Wishlist</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ─── MATH ─── -->
-      <div class="product-card" data-cat="math">
-        <div class="prod-img">➕</div>
-        <div class="prod-info">
-          <div class="prod-badges">
-            <span class="badge-cat">Math</span>
-            <span class="badge-age">Ages 5–8</span>
-            <span class="badge-cards">80 Cards</span>
-          </div>
-          <div class="prod-title">Times Tables &amp; Multiplication Cards</div>
-          <div class="prod-subtitle">2× to 12× Tables with Visual Grid Method Cards</div>
-          <div class="prod-by">by <span>InfoWall</span> (Author)</div>
-          <div class="prod-rating">
-            <span class="stars">★★★★★</span>
-            <span class="rating-num">4.9</span>
-            <span class="rating-cnt">(47 ratings)</span>
-          </div>
-          <div class="save-chip">🏷️ <strong>Top Rated</strong> in Math Learning</div>
-          <div class="price-row">
-            <span class="price-now">₹549</span>
-            <span class="price-orig">₹799</span>
-            <span class="price-off">31% OFF</span>
-          </div>
-          <div class="prod-desc">80 cards covering all times tables from 2× to 12×. Each card uses visual grids and colour coding to make multiplication memorable and fun for school-age children.</div>
-          <div class="prod-actions">
-            <button class="btn-cart" onclick="addToCart(this,'Times Tables & Multiplication Cards')"><i class="bi bi-cart-plus"></i> Add to Cart</button>
-            <button class="btn-wish" onclick="toggleWish(this)"><i class="bi bi-heart"></i> Wishlist</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ─── COMBO PACKS ─── -->
-      <div class="product-card" data-cat="combo">
-        <div class="prod-img">🎁</div>
-        <div class="prod-info">
-          <div class="prod-badges">
-            <span class="badge-cat">Combo Pack</span>
-            <span class="badge-age">Ages 2–7</span>
-            <span class="badge-cards">5 Packs</span>
-          </div>
-          <div class="prod-title">Mega Learning Bundle — 5 Packs</div>
-          <div class="prod-subtitle">Alphabets + Numbers + Animals + Colours + Shapes</div>
-          <div class="prod-by">by <span>InfoWall</span> (Author)</div>
-          <div class="prod-rating">
-            <span class="stars">★★★★★</span>
-            <span class="rating-num">5.0</span>
-            <span class="rating-cnt">(42 ratings)</span>
-          </div>
-          <div class="save-chip">🏷️ <strong>Best Value</strong> — Save ₹1,000 vs buying separately</div>
-          <div class="price-row">
-            <span class="price-now">₹1,499</span>
-            <span class="price-orig">₹2,499</span>
-            <span class="price-off">40% OFF</span>
-          </div>
-          <div class="prod-desc">The ultimate learning bundle! Get 5 complete card packs covering all core learning areas. Perfect as a gift or for starting a complete home learning journey for your child.</div>
-          <div class="prod-actions">
-            <button class="btn-cart" onclick="addToCart(this,'Mega Learning Bundle — 5 Packs')"><i class="bi bi-cart-plus"></i> Add to Cart</button>
-            <button class="btn-wish" onclick="toggleWish(this)"><i class="bi bi-heart"></i> Wishlist</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="product-card" data-cat="combo">
-        <div class="prod-img">🎀</div>
-        <div class="prod-info">
-          <div class="prod-badges">
-            <span class="badge-cat">Combo Pack</span>
-            <span class="badge-age">Ages 2–5</span>
-            <span class="badge-cards">3 Packs</span>
-          </div>
-          <div class="prod-title">Starter Kit Bundle — 3 Packs</div>
-          <div class="prod-subtitle">Alphabets + Numbers + Animals — Perfect Beginner Set</div>
-          <div class="prod-by">by <span>InfoWall</span> (Author)</div>
-          <div class="prod-rating">
-            <span class="stars">★★★★★</span>
-            <span class="rating-num">4.9</span>
-            <span class="rating-cnt">(38 ratings)</span>
-          </div>
-          <div class="save-chip">🏷️ <strong>Educator Recommended</strong> for ages 2–5</div>
-          <div class="price-row">
-            <span class="price-now">₹899</span>
-            <span class="price-orig">₹1,499</span>
-            <span class="price-off">40% OFF</span>
-          </div>
-          <div class="prod-desc">The ideal starter set for young learners! Combines our top 3 packs — Alphabets, Numbers, and Animals — into one affordable bundle. Makes a wonderful gift for any occasion.</div>
-          <div class="prod-actions">
-            <button class="btn-cart" onclick="addToCart(this,'Starter Kit Bundle — 3 Packs')"><i class="bi bi-cart-plus"></i> Add to Cart</button>
-            <button class="btn-wish" onclick="toggleWish(this)"><i class="bi bi-heart"></i> Wishlist</button>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /productList -->
 
     <div class="empty-state" id="emptyState">
       <div class="e-emoji">🔍</div>
@@ -719,31 +476,40 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  let cartCount = 0;
-
-  // Category filter via dropdown
+  // 1. Initialize category map with default base
   const catLabels = {
-    all: '🏪 All Products', alphabets: '🔤 Alphabets', numbers: '🔢 Numbers',
-    colors: '🎨 Colors', animals: '🦁 Animals', fruits: '🍎 Fruits',
-    shapes: '🔷 Shapes', sightwords: '👁️ Sight Words', math: '➕ Math', combo: '🎁 Combo Packs'
+    'all': 'All Products'
   };
+  
+  // 2. Automatically read and build dynamic labels from your Django loop items
+  document.querySelectorAll('.cat-dropdown-menu .dropdown-item').forEach(item => {
+    const cat = item.dataset.cat;
+    if (cat && cat !== 'all') {
+      catLabels[cat] = item.textContent.replace('📂', '').trim();
+    }
+  });
 
+  // 3. Dropdown click and filter execution handler
   document.querySelectorAll('.cat-dropdown-menu .dropdown-item').forEach(item => {
     item.addEventListener('click', function (e) {
       e.preventDefault();
 
+      // Synchronize visual active states
       document.querySelectorAll('.cat-dropdown-menu .dropdown-item').forEach(i => i.classList.remove('active'));
       this.classList.add('active');
 
       const cat = this.dataset.cat;
-      document.getElementById('categoryDropdown').innerHTML = catLabels[cat];
+      
+      // Update main dropdown button label text
+      document.getElementById('categoryDropdown').innerHTML = this.innerHTML;
 
       const cards = document.querySelectorAll('#productList .product-card');
       let visible = 0;
 
+      // Filtering verification loops
       cards.forEach(card => {
-        const cardCat = card.dataset.cat || '';
-        if (cat === 'all' || cardCat.includes(cat)) {
+        const cardCat = card.dataset.cat ? card.dataset.cat.trim().toLowerCase() : '';
+        if (cat === 'all' || cardCat === cat) {
           card.classList.remove('hidden');
           visible++;
         } else {
@@ -751,41 +517,17 @@
         }
       });
 
-      const label = cat === 'all' ? `All ${visible} products` :
-        visible === 1 ? `1 product in ${catLabels[cat]}` : `${visible} products in ${catLabels[cat]}`;
-      document.getElementById('resultsCount').textContent = `Showing ${visible === 1 ? '1 product' : visible + ' products'}`;
-      document.getElementById('activeLabel').textContent = label;
+      // Update matching string indicators smoothly
+      const currentLabelName = catLabels[cat] || cat;
+      const labelText = cat === 'all' 
+        ? `All ${visible} products` 
+        : `${visible} ${visible === 1 ? 'product' : 'products'} in ${currentLabelName}`;
+
+      document.getElementById('resultsCount').textContent = `Showing ${visible} ${visible === 1 ? 'product' : 'products'}`;
+      document.getElementById('activeLabel').textContent = labelText;
       document.getElementById('emptyState').style.display = visible === 0 ? 'block' : 'none';
     });
   });
-
-  // Add to Cart
-  function addToCart(btn, name) {
-    if (btn.classList.contains('added')) return;
-    cartCount++;
-    document.getElementById('cartBadge').textContent = cartCount;
-
-    btn.classList.add('added');
-    btn.innerHTML = '<i class="bi bi-check-circle-fill"></i> Added!';
-
-    setTimeout(() => {
-      btn.classList.remove('added');
-      btn.innerHTML = '<i class="bi bi-cart-plus"></i> Add to Cart';
-    }, 2000);
-
-    const toast = document.getElementById('cartToast');
-    document.getElementById('toastMsg').textContent = `"${name.length > 32 ? name.substring(0,32)+'…' : name}" added to cart!`;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3200);
-  }
-
-  // Wishlist toggle
-  function toggleWish(btn) {
-    const wished = btn.classList.toggle('wished');
-    btn.innerHTML = wished
-      ? '<i class="bi bi-heart-fill"></i> Wishlisted'
-      : '<i class="bi bi-heart"></i> Wishlist';
-  }
 </script>
 
 </body>

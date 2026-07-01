@@ -28,7 +28,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY_INFO')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['infowall.onrender.com', '*']
+ALLOWED_HOSTS = ['infowall.onrender.com', 'localhost', '127.0.0.1', '*', 'ariel-villatic-kyle.ngrok-free.dev']
 
 CSRF_TRUSTED_ORIGINS = [
     'https://ariel-villatic-kyle.ngrok-free.dev',
@@ -155,3 +155,5 @@ MESSAGE_TAGS = {
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'mainapp.Usermodel'

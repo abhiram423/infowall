@@ -90,6 +90,16 @@
     }
     .topbar-icon:hover { background: #f5f3ff; color: var(--purple); border-color: #ddd6fe; }
     .hamburger { display: none; border: none; }
+    .cart-btn-wrap { position: relative; text-decoration: none; }
+    .cart-badge {
+      position: absolute; top: -6px; right: -6px;
+      background: linear-gradient(135deg, #7c3aed, #ec4899);
+      color: #fff; font-size: .58rem; font-weight: 900;
+      min-width: 18px; height: 18px; border-radius: 50px;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 4px; border: 2px solid #fff;
+      font-family: var(--font-b); line-height: 1;
+    }
 
     /* ── NEW ACCOUNT CONTAINER ── */
     .page-content { padding: 40px 32px; max-width: 1000px; }
@@ -192,6 +202,11 @@
     </div>
     <div class="topbar-right">
       <button class="topbar-icon hamburger" onclick="openSidebar()"><i class="bi bi-list"></i></button>
+      <!-- Cart Button -->
+      <a class="topbar-icon cart-btn-wrap" href="{% url 'cart' %}" title="My Cart">
+          <i class="bi bi-cart3"></i>
+          {% if cart_count > 0 %}<span class="cart-badge">{{ cart_count }}</span>{% endif %}
+      </a>
       <div class="sb-avatar" style="width:36px; height:36px; font-size: 0.9rem;">{{ user.username|first|upper }}</div>
     </div>
   </div>
