@@ -1,22 +1,31 @@
 from django.contrib import admin
-from .models import Product, Cart, ProductImage, Wishlist, Usermodel, Quiz, QuizResult, Feedback, Profile
+from .models import Product, ProductImage
 
-class ProductImageAdmin(admin.TabularInline):
+
+class ProductImageInline(admin.TabularInline):
     model = ProductImage
-    extra = 3 
+    extra = 4
 
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    inlines = [ProductImageAdmin] 
-    list_display = ('name', 'price', 'category', 'subtitle') 
-    search_fields = ('name', 'category')
-    list_filter = ('category',)
 
-admin.site.register(Cart)
-admin.site.register(Wishlist)
-admin.site.register(Usermodel)
-admin.site.register(Quiz)
-admin.site.register(QuizResult)
-admin.site.register(Feedback)
-admin.site.register(Profile)
+    list_display = (
+        "name",
+        "category",
+        "glossy_price",
+        "matte_price",
+    )
+
+    search_fields = (
+        "name",
+        "category",
+    )
+
+    list_filter = (
+        "category",
+    )
+
+    inlines = [
+        ProductImageInline,
+    ]

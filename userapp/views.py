@@ -10,7 +10,6 @@ from mainapp.models import Usermodel, Profile, QuizResult, Feedback, Product, Ca
 
 logger = logging.getLogger(__name__)
 
-# ── 1. DASHBOARD VIEW ──
 @login_required(login_url='login')
 def dashboard(request):
     user = request.user 
@@ -35,7 +34,6 @@ def dashboard(request):
     return render(request, 'user_templates/dashboard.html', context)
 
 
-# ── 2. SAVE QUIZ RESULT (AJAX API) ──
 @login_required(login_url='login')
 def save_quiz_result(request):
     if request.method == "POST":
@@ -52,7 +50,6 @@ def save_quiz_result(request):
     return JsonResponse({'status': 'invalid request'}, status=400)
 
 
-# ── 3. FEEDBACK VIEW ──
 @login_required(login_url='login')
 def feedback(request):
     user = request.user
@@ -88,7 +85,6 @@ def feedback(request):
     return render(request, 'user_templates/feedback.html', {'user': user, 'db_stars': db_stars, 'cart_count': cart_count})
 
 
-# ── 4. PROFILE VIEW ──
 @login_required(login_url='login')
 def profile(request):
     user = request.user
@@ -137,7 +133,6 @@ def profile(request):
     return render(request, 'user_templates/profile.html', context)
 
 
-# ── 5. FLASHCARDS USER VIEW ──
 @login_required(login_url='login')
 def flashcards_user(request):
     user = request.user
@@ -146,7 +141,6 @@ def flashcards_user(request):
     return render(request, 'user_templates/flashcards_user.html', {'user': user, 'db_stars': db_stars, 'cart_count': cart_count})
 
 
-# ── 6. ADD TO CART VIEW (RESOLVED VARIANT PRICING & PIPELINE) ──
 def add_to_cart(request, product_id):
     if not request.user.is_authenticated:
         request.session['next_page'] = 'cart'  
@@ -157,7 +151,6 @@ def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     finish = request.POST.get('selected_finish', 'glossy').lower()
 
-    # ఎంచుకున్న ఫినిషింగ్ వేరియంట్ కాంబినేషన్‌తో కార్ట్ ఐటమ్ గెట్/క్రియేట్
     cart_item, created = Cart.objects.get_or_create(
         user=user,
         product=product,
@@ -173,7 +166,6 @@ def add_to_cart(request, product_id):
     return redirect('cart')
 
 
-# ── 7. CART PAGE VIEW (RESOLVED EXCEL PRICING LOOKUP BUG) ──
 @login_required(login_url='login')
 def cart(request):
     user = request.user
@@ -181,19 +173,16 @@ def cart(request):
     total_price = 0
 
     for item in cart_items:
-        title_clean = item.product.name.lower()
-        finish = item.paper_finish.lower() if item.paper_finish else 'glossy'
-        
-        # Excel Sheet Pricing Calculations Engine Lock
-        if 'alphabet' in title_clean:
-            current_price = 299 if finish == 'glossy' else 199
-        elif 'number' in title_clean or 'shape' in title_clean:
-            current_price = 199 if finish == 'glossy' else 189
+        finish = item.paper_finish.lower()
+
+        if finish == "glossy":
+            current_price = item.product.glossy_price
         else:
-            current_price = 299 if finish == 'glossy' else 199
+            current_price = item.product.matte_price
 
         item.variant_price = current_price
         item.item_total = current_price * item.quantity
+
         total_price += item.item_total
 
     context = {
@@ -205,7 +194,6 @@ def cart(request):
     return render(request, 'user_templates/cart.html', context)
 
 
-# ── 8. REMOVE FROM CART ──
 @login_required(login_url='login')
 def remove_from_cart(request, cart_id):
     cart_item = get_object_or_404(Cart, id=cart_id, user=request.user)
@@ -213,7 +201,6 @@ def remove_from_cart(request, cart_id):
     return redirect('cart')
 
 
-# ── 9. USER SHOP VIEW ──
 @login_required(login_url='login')
 def user_shop(request):
     user = request.user
@@ -236,7 +223,6 @@ def user_shop(request):
     return render(request, 'user_templates/user_shop.html', context)
 
 
-# ── 10. WISHLIST TOGGLE (REACTION PIPELINE) ──
 def toggle_wishlist(request, product_id):
     if not request.user.is_authenticated:
         request.session['next_page'] = 'wishlist'
@@ -257,7 +243,6 @@ def toggle_wishlist(request, product_id):
     return redirect(request.META.get('HTTP_REFERER', 'shop'))
 
 
-# ── 11. WISHLIST PAGE VIEW ──
 @login_required(login_url='login')
 def wishlist(request):
     user = request.user
@@ -275,7 +260,6 @@ def wishlist(request):
     return render(request, 'user_templates/wishlist.html', context)
 
 
-# ── 12. QUANTITY CONTROLLERS PIPELINE ──
 @login_required(login_url='login')
 def increase_cart_qty(request, cart_id):
     cart_item = get_object_or_404(Cart, id=cart_id, user=request.user)
@@ -293,3 +277,43 @@ def decrease_cart_qty(request, cart_id):
         cart_item.delete()
         messages.success(request, f"{cart_item.product.name} removed from cart.")
     return redirect('cart')
+
+@login_required(login_url="login")
+def shops(request):
+
+    user = request.user
+
+    products = Product.objects.all()
+
+    categories = (
+        Product.objects
+        .exclude(category__isnull=True)
+        .exclude(category='')
+        .values_list("category", flat=True)
+        .distinct()
+    )
+
+    cleaned_categories = sorted(set(cat.strip() for cat in categories))
+
+    db_stars = QuizResult.objects.filter(
+        user=user
+    ).aggregate(
+        Sum("score")
+    )["score__sum"] or 0
+
+    cart_count = Cart.objects.filter(
+        user=user
+    ).aggregate(
+        total=Sum("quantity")
+    )["total"] or 0
+
+    context = {
+        "user": user,
+        "products": products,
+        "categories": cleaned_categories,
+        "total_products": products.count(),
+        "db_stars": db_stars,
+        "cart_count": cart_count,
+    }
+    return render(request, "user_templates/shops.html", context)
+

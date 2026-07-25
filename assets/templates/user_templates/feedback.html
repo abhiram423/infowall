@@ -53,6 +53,10 @@
                       color: var(--purple); border: 1px solid rgba(124,58,237,.15); }
     .sb-link i { font-size: 1.1rem; width: 22px; text-align: center; }
     .sb-link .lbl { flex: 1; }
+    .sb-link .badge-pill {
+      background: linear-gradient(135deg,var(--purple),var(--pink));
+      color: #fff; font-size: .7rem; padding: 2px 8px; border-radius: 20px; font-weight: 900;
+    }
     .sb-footer { padding: 16px 16px 20px; border-top: 1px solid #ede9fe; }
     .sb-user {
       display: flex; align-items: center; gap: 10px;
@@ -186,12 +190,24 @@
     <a class="sb-link" href="{% url 'arwall_page' %}">
       <i class="bi bi-camera-video-fill"></i><span class="lbl">AR Wall</span>
     </a>
+    <a class="sb-link" href="{% url 'shops' %}">
+      <i class="bi bi-shop"></i><span class="lbl">Shop</span>
+    </a>
+    <a class="sb-link" href="{% url 'cart' %}">
+      <i class="bi bi-cart3"></i><span class="lbl">My Cart</span>
+      {% if cart_count > 0 %}<span class="badge-pill">{{ cart_count }}</span>{% endif %}
+    </a>
+    <a class="sb-link" href="{% url 'wishlist' %}">
+      <i class="bi bi-heart-fill"></i><span class="lbl">Wishlist</span>
+      {% if wishlist_count > 0 %}<span class="badge-pill">{{ wishlist_count }}</span>{% endif %}
+    </a>
     <a class="sb-link active" href="{% url 'feedback' %}">
       <i class="bi bi-chat-dots-fill"></i><span class="lbl">Feedback</span>
     </a>
     <a class="sb-link" href="{% url 'profile' %}">
       <i class="bi bi-person-circle"></i><span class="lbl">Profile</span>
     </a>
+    
     <a class="sb-link" href="{% url 'index' %}">
       <i class="bi bi-box-arrow-left"></i><span class="lbl">Logout</span>
     </a>
