@@ -409,7 +409,10 @@
     .hero-logo-wrap::after{width:310px;height:310px}
   }
   @media(max-width:767px){
-    .hero-logo-wrap{display:none}
+    .hero-logo-wrap{min-height:260px;margin-top:12px}
+    .hero-logo-wrap::before{width:230px;height:230px}
+    .hero-logo-wrap::after{width:230px;height:230px}
+    .hero-logo-img{width:260px}
     #hero{padding:64px 0 40px;min-height:auto}
     #trust,#categories,#daily,#adventures,#testimonials,#cta{padding:56px 0}
     .footer-bottom{flex-direction:column;text-align:center}
@@ -422,6 +425,10 @@
     .hero-p{font-size:.95rem}
     .challenge-options{grid-template-columns:1fr}
     .adv-card{min-height:220px}
+    .hero-logo-wrap{min-height:210px}
+    .hero-logo-wrap::before{width:190px;height:190px}
+    .hero-logo-wrap::after{width:190px;height:190px}
+    .hero-logo-img{width:215px}
   }
 
   /* ── AUTH SIDEBAR ── */
