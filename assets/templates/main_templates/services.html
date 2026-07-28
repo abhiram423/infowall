@@ -75,8 +75,18 @@
   .hero-btn:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(52,199,89,.5);color:#fff}
   .hero-logo-wrap{display:flex;align-items:center;justify-content:center;min-height:420px;position:relative}
   .hero-logo-wrap::before{content:'';position:absolute;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(52,199,89,.09) 0%,rgba(255,209,102,.07) 55%,transparent 100%);animation:blobFloat 10s ease-in-out infinite;pointer-events:none}
-  .hero-logo-wrap::after{content:'';position:absolute;width:380px;height:380px;border-radius:50%;border:1.5px dashed rgba(52,199,89,.18);animation:blobFloat 14s ease-in-out infinite reverse;pointer-events:none}
-  .hero-logo-img{width:420px;max-width:92%;position:relative;z-index:5;filter:drop-shadow(0 28px 56px rgba(52,199,89,.22)) drop-shadow(0 8px 20px rgba(0,0,0,.09));animation:logoFloat 6s ease-in-out infinite}
+  .hero-logo-wrap::after{content:'';position:absolute;width:380px;height:380px;border-radius:50%;border:2px solid rgba(52,199,89,.28);animation:blobFloat 14s ease-in-out infinite reverse;pointer-events:none}
+  .logo-deco{position:absolute;pointer-events:none;z-index:6}
+  .deco-dot-blue{width:14px;height:14px;border-radius:50%;background:var(--blue);top:14%;left:11%;box-shadow:0 2px 8px rgba(79,195,247,.5)}
+  .deco-dot-yellow{width:12px;height:12px;border-radius:50%;background:var(--yellow);bottom:17%;right:13%;box-shadow:0 2px 8px rgba(255,209,102,.5)}
+  .deco-ring{width:20px;height:20px;border-radius:50%;border:2.5px solid var(--blue);top:47%;right:3%}
+  .deco-spark{font-size:1.6rem;line-height:1;color:var(--coral);top:9%;right:15%;transform:rotate(-10deg)}
+  .deco-star{font-size:1.3rem;line-height:1;color:var(--coral);bottom:15%;left:5%;transform:rotate(-8deg)}
+  .hero-logo-img{width:420px;max-width:92%;position:relative;z-index:5;animation:logoFloat 6s ease-in-out infinite, logoGlow 2.6s ease-in-out infinite}
+  @keyframes logoGlow{
+    0%,100%{filter:drop-shadow(0 28px 56px rgba(52,199,89,.22)) drop-shadow(0 8px 20px rgba(0,0,0,.09)) drop-shadow(0 0 18px rgba(52,199,89,.35))}
+    50%{filter:drop-shadow(0 28px 56px rgba(52,199,89,.22)) drop-shadow(0 8px 20px rgba(0,0,0,.09)) drop-shadow(0 0 42px rgba(52,199,89,.75))}
+  }
   @keyframes logoFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-18px) scale(1.02)}}
 
   /* CORE SERVICES */
@@ -161,9 +171,62 @@
     .sec-h{font-size:1.65rem}
     .hero-p{font-size:.95rem}
   }
+
+  /* ── AUTH SIDEBAR ── */
+  .btn-nav-reg{background:transparent;border:2px solid var(--border);color:var(--dark);border-radius:50px;padding:8px 22px;font-weight:800;font-size:.9rem;cursor:pointer;transition:all .25s}
+  .btn-nav-reg:hover{border-color:var(--green);color:var(--green-d)}
+  .auth-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2000;display:none;backdrop-filter:blur(3px)}
+  .auth-overlay.open{display:block}
+  .auth-drawer{position:fixed;top:0;right:-360px;width:340px;max-width:92vw;height:100%;background:var(--cream);z-index:2001;box-shadow:-8px 0 40px rgba(0,0,0,.18);transition:right .38s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;border-left:3px solid rgba(52,199,89,.15)}
+  .auth-overlay.open .auth-drawer{right:0}
+  .auth-drawer-head{padding:28px 28px 20px;border-bottom:1px solid rgba(52,199,89,.15);display:flex;align-items:center;justify-content:space-between}
+  .auth-logo{font-family:var(--fh);font-size:1.6rem;letter-spacing:1px;font-weight:800}
+  .auth-close{width:36px;height:36px;border-radius:50%;border:none;background:#F3F4F6;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .2s}
+  .auth-close:hover{background:#E5E7EB;transform:rotate(90deg)}
+  .auth-drawer-body{padding:32px 28px;flex:1;display:flex;flex-direction:column;gap:24px}
+  .auth-greet{font-family:var(--fh);font-size:1.5rem;color:#1F2937;line-height:1.3}
+  .auth-greet em{color:var(--green-d);font-style:normal}
+  .auth-sub{font-size:.9rem;color:#6B7280;font-weight:600;line-height:1.6}
+  .auth-perks{display:flex;flex-direction:column;gap:9px}
+  .auth-perk{display:flex;align-items:center;gap:10px;font-size:.88rem;font-weight:700;color:#374151}
+  .auth-perk span:first-child{font-size:1.2rem}
+  .auth-divider{border:none;border-top:1px solid #E5E7EB;margin:0}
+  .btn-auth-reg{display:block;text-align:center;text-decoration:none;background:linear-gradient(135deg,var(--green),var(--green-d));color:#fff;font-family:var(--fh);font-size:1.15rem;padding:15px;border-radius:16px;box-shadow:0 6px 24px rgba(52,199,89,.35);transition:all .3s}
+  .btn-auth-reg:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(52,199,89,.45);color:#fff}
+  .auth-login-row{text-align:center;font-size:.9rem;color:#6B7280;font-weight:600}
+  .auth-login-row a{color:var(--green-d);font-weight:800;text-decoration:none}
+  .auth-login-row a:hover{text-decoration:underline}
+  .auth-free-note{background:var(--green-l);border-radius:12px;padding:12px 16px;font-size:.82rem;font-weight:700;color:var(--green-d);text-align:center}
   </style>
 </head>
 <body>
+
+<!-- Auth Sidebar -->
+<div class="auth-overlay" id="authOverlay" onclick="closeAuthDrawer(event)">
+  <div class="auth-drawer">
+    <div class="auth-drawer-head">
+      <span class="auth-logo">
+        <span style="color:#1B5FAA">I</span><span style="color:#2AB5E8">N</span><span style="color:#3DBF6E">F</span><span style="color:#F05545">O</span><span style="color:#8A3AB9">W</span><span style="color:#F5C234">A</span><span style="color:#F57C22">L</span><span style="color:#8A3AB9">L</span>
+      </span>
+      <button class="auth-close" onclick="toggleAuthDrawer()">✕</button>
+    </div>
+    <div class="auth-drawer-body">
+      <div class="auth-greet">Join <em>InfoWall</em> — it's 100% Free! 🎉</div>
+      <div class="auth-sub">Unlock all flashcards, quizzes, voice pronunciation and track your child's progress.</div>
+      <div class="auth-perks">
+        <div class="auth-perk"><span>✅</span><span>100+ Flashcards across 14 categories</span></div>
+        <div class="auth-perk"><span>🎯</span><span>Interactive quiz mode</span></div>
+        <div class="auth-perk"><span>🔊</span><span>Voice pronunciation for every word</span></div>
+        <div class="auth-perk"><span>🏆</span><span>Badges, streaks & achievements</span></div>
+        <div class="auth-perk"><span>📊</span><span>Progress dashboard for parents</span></div>
+      </div>
+      <hr class="auth-divider" />
+      <a class="btn-auth-reg" href="{% url 'register' %}">🚀 Create Free Account</a>
+      <div class="auth-login-row">Already have an account? <a href="{% url 'login' %}">Login here →</a></div>
+      <div class="auth-free-note">🎁 No credit card required · Always free for kids</div>
+    </div>
+  </div>
+</div>
 
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg">
@@ -183,6 +246,7 @@
         <li class="nav-item"><a class="nav-link-custom nav-link-active" href="{% url 'services' %}">Services</a></li>
       </ul>
       <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">
+        <button class="btn-nav-reg" onclick="toggleAuthDrawer()">📝 Register</button>
         <a class="btn-nav-cta" href="{% url 'flashcards' %}">🃏 Try for Free</a>
       </div>
     </div>
@@ -208,6 +272,11 @@
       </div>
       <div class="col-lg-5 d-flex align-items-center justify-content-center">
         <div class="hero-logo-wrap">
+          <span class="logo-deco deco-dot-blue"></span>
+          <span class="logo-deco deco-spark">✦</span>
+          <span class="logo-deco deco-ring"></span>
+          <span class="logo-deco deco-star">✩</span>
+          <span class="logo-deco deco-dot-yellow"></span>
           <img src="{% static 'images/infowall_logo.png' %}" alt="InfoWall" class="hero-logo-img">
         </div>
       </div>
@@ -352,34 +421,18 @@
       <h2 class="sec-h" style="color:#fff">What's <span style="color:var(--yellow)">Coming Next</span></h2>
       <p style="color:rgba(255,255,255,.65);max-width:520px;margin:0 auto;font-size:.96rem;line-height:1.8">We're constantly building new ways to make learning magical. Here's a sneak peek at what's on the roadmap.</p>
     </div>
-    <div class="row g-4">
-      <div class="col-sm-6 col-lg-3 reveal">
+    <div class="row g-4 justify-content-center">
+      <div class="col-sm-6 col-lg-4 reveal">
         <div class="pm-card">
-          <div class="coming-tag">In Progress</div>
+          <div class="coming-tag">Upcoming</div>
           <span class="pm-ico">📱</span>
           <h5>Mobile App</h5>
           <p>iOS &amp; Android app with offline mode, gamification, and parental controls.</p>
         </div>
       </div>
-      <div class="col-sm-6 col-lg-3 reveal">
+      <div class="col-sm-6 col-lg-4 reveal">
         <div class="pm-card">
-          <div class="coming-tag">Coming Soon</div>
-          <span class="pm-ico">🥽</span>
-          <h5>AR Learning Mode</h5>
-          <p>Point your camera at real-world objects and watch InfoWall cards appear in AR.</p>
-        </div>
-      </div>
-      <div class="col-sm-6 col-lg-3 reveal">
-        <div class="pm-card">
-          <div class="coming-tag">Planned</div>
-          <span class="pm-ico">🗣️</span>
-          <h5>Voice & Audio Cards</h5>
-          <p>Pronunciation guides, songs, and storytelling to support auditory learners.</p>
-        </div>
-      </div>
-      <div class="col-sm-6 col-lg-3 reveal">
-        <div class="pm-card">
-          <div class="coming-tag">Planned</div>
+          <div class="coming-tag">Upcoming</div>
           <span class="pm-ico">🌍</span>
           <h5>Multilingual Mode</h5>
           <p>Flash cards in Telugu, Hindi, Tamil, and more — for India's diverse families.</p>
@@ -497,8 +550,8 @@ document.querySelectorAll('.reveal').forEach(el=>revObs.observe(el));
         <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#1A7A3D;margin:24px 0 10px">12. Contact Us</h6>
         <div style="background:#F0FBF1;border-radius:14px;padding:18px 22px;border:1px solid rgba(52,199,89,.2);margin-bottom:20px">
           <p style="margin-bottom:4px;font-weight:800">InfoWall</p>
-          <p style="color:#64748B;font-size:.9rem;margin-bottom:4px">📧 <a href="mailto:support@infowall.in" style="color:#1A7A3D;text-decoration:none;font-weight:700">support@infowall.in</a></p>
-          <p style="color:#64748B;font-size:.9rem;margin:0">📱 <a href="https://instagram.com/infowall.in" target="_blank" style="color:#1A7A3D;text-decoration:none;font-weight:700">@infowall.in</a></p>
+          <p style="color:#64748B;font-size:.9rem;margin-bottom:4px">📧 <a href="mailto:infowallofficial@gmail.com" style="color:#1A7A3D;text-decoration:none;font-weight:700">infowallofficial@gmail.com</a></p>
+          <p style="color:#64748B;font-size:.9rem;margin:0">📱 <a href="tel:+917989869258" style="color:#1A7A3D;text-decoration:none;font-weight:700">+91 79898 69258</a></p>
         </div>
         <p style="font-size:.78rem;color:#94A3B8;text-align:center;border-top:1px solid #E8F0E8;padding-top:16px;margin:0">© 2026 InfoWall. All Rights Reserved. All content, designs, and educational materials are the intellectual property of InfoWall.</p>
       </div>
@@ -542,8 +595,8 @@ document.querySelectorAll('.reveal').forEach(el=>revObs.observe(el));
         <h6 style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#F5A623;margin:24px 0 10px">12. Contact Us</h6>
         <div style="background:#FFF8E1;border-radius:14px;padding:18px 22px;border:1px solid rgba(245,166,35,.2)">
           <p style="margin-bottom:4px;font-weight:800">InfoWall</p>
-          <p style="color:#64748B;font-size:.9rem;margin-bottom:4px">📧 <a href="mailto:support@infowall.in" style="color:#F5A623;text-decoration:none;font-weight:700">support@infowall.in</a></p>
-          <p style="color:#64748B;font-size:.9rem;margin:0">📱 <a href="https://instagram.com/infowall.in" target="_blank" style="color:#F5A623;text-decoration:none;font-weight:700">@infowall.in</a></p>
+          <p style="color:#64748B;font-size:.9rem;margin-bottom:4px">📧 <a href="mailto:infowallofficial@gmail.com" style="color:#F5A623;text-decoration:none;font-weight:700">infowallofficial@gmail.com</a></p>
+          <p style="color:#64748B;font-size:.9rem;margin:0">📱 <a href="tel:+917989869258" style="color:#F5A623;text-decoration:none;font-weight:700">+91 79898 69258</a></p>
         </div>
       </div>
       <div class="modal-footer" style="border-top:1.5px solid #E8F0E8;padding:20px 32px;flex-direction:column;align-items:stretch;gap:12px">
@@ -573,6 +626,21 @@ document.querySelectorAll('.iw-eff-date').forEach(function(e){e.textContent=new 
     if(m)m.hide();
   });
 })();
+</script>
+<script>
+function toggleAuthDrawer(){
+  document.getElementById('authOverlay').classList.toggle('open');
+  document.body.style.overflow=document.getElementById('authOverlay').classList.contains('open')?'hidden':'';
+}
+function closeAuthDrawer(e){
+  if(e.target===document.getElementById('authOverlay'))toggleAuthDrawer();
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    const overlay=document.getElementById('authOverlay');
+    if(overlay.classList.contains('open'))toggleAuthDrawer();
+  }
+});
 </script>
 </body>
 </html>
