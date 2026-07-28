@@ -66,21 +66,18 @@
   .hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(79,195,247,.12);border:1px solid rgba(2,136,209,.25);border-radius:50px;padding:6px 18px;color:var(--blue-d);font-size:.82rem;font-weight:800;margin-bottom:22px;animation:fadeDown .6s ease both}
   .hero-h{font-family:var(--fh);font-size:clamp(2.4rem,5vw,3.8rem);line-height:1.1;margin-bottom:20px;animation:fadeDown .6s .1s ease both}
   .hero-p{font-size:1.05rem;color:var(--gray);line-height:1.85;max-width:500px;margin-bottom:0;animation:fadeDown .6s .2s ease both}
+  .hero-highlight{font-family:var(--fb);font-weight:800;color:var(--dark);font-size:1.02rem;line-height:1.75;max-width:500px;margin-top:18px;animation:fadeDown .6s .28s ease both}
   @keyframes fadeDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
   .hero-logo-wrap{display:flex;align-items:center;justify-content:center;min-height:420px;position:relative}
-  .hero-logo-wrap::before{content:'';position:absolute;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(52,199,89,.09) 0%,rgba(255,209,102,.07) 55%,transparent 100%);animation:blobFloat 10s ease-in-out infinite;pointer-events:none}
-  .hero-logo-wrap::after{content:'';position:absolute;width:380px;height:380px;border-radius:50%;border:2px solid rgba(52,199,89,.28);animation:blobFloat 14s ease-in-out infinite reverse;pointer-events:none}
+  .hero-logo-wrap::before{content:'';position:absolute;width:380px;height:380px;border-radius:50%;background:#fff;box-shadow:0 10px 34px rgba(0,0,0,.08);pointer-events:none}
+  .hero-logo-wrap::after{content:'';position:absolute;width:380px;height:380px;border-radius:50%;border:2px solid rgba(52,199,89,.28);pointer-events:none}
   .logo-deco{position:absolute;pointer-events:none;z-index:6}
   .deco-dot-blue{width:14px;height:14px;border-radius:50%;background:var(--blue);top:14%;left:11%;box-shadow:0 2px 8px rgba(79,195,247,.5)}
   .deco-dot-yellow{width:12px;height:12px;border-radius:50%;background:var(--yellow);bottom:17%;right:13%;box-shadow:0 2px 8px rgba(255,209,102,.5)}
   .deco-ring{width:20px;height:20px;border-radius:50%;border:2.5px solid var(--blue);top:47%;right:3%}
   .deco-spark{font-size:1.6rem;line-height:1;color:var(--coral);top:9%;right:15%;transform:rotate(-10deg)}
   .deco-star{font-size:1.3rem;line-height:1;color:var(--coral);bottom:15%;left:5%;transform:rotate(-8deg)}
-  .hero-logo-img{width:420px;max-width:92%;position:relative;z-index:5;animation:logoFloat 6s ease-in-out infinite, logoGlow 2.6s ease-in-out infinite}
-  @keyframes logoGlow{
-    0%,100%{filter:drop-shadow(0 28px 56px rgba(52,199,89,.22)) drop-shadow(0 8px 20px rgba(0,0,0,.09)) drop-shadow(0 0 18px rgba(52,199,89,.35))}
-    50%{filter:drop-shadow(0 28px 56px rgba(52,199,89,.22)) drop-shadow(0 8px 20px rgba(0,0,0,.09)) drop-shadow(0 0 42px rgba(52,199,89,.75))}
-  }
+  .hero-logo-img{width:430px;max-width:105%;position:relative;z-index:5;animation:logoFloat 6s ease-in-out infinite}
   @keyframes logoFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-18px) scale(1.02)}}
 
   /* CONTACT CARDS */
@@ -110,17 +107,6 @@
   .soc-fb{border-color:rgba(24,119,242,.3)}  .soc-fb:hover{background:rgba(24,119,242,.06);border-color:rgba(24,119,242,.5)}
   .soc-yt{border-color:rgba(255,0,0,.25)}    .soc-yt:hover{background:rgba(255,0,0,.05);border-color:rgba(255,0,0,.4)}
 
-  /* CTA */
-  #cta{background:linear-gradient(135deg,#1A7A3D 0%,#34C759 40%,#1ABC9C 100%);padding:80px 0;text-align:center;position:relative;overflow:hidden}
-  #cta::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.08) 2px,transparent 2px);background-size:32px 32px}
-  #cta h2{font-family:var(--fh);font-size:clamp(1.9rem,4vw,3rem);color:#fff;margin-bottom:12px;position:relative;z-index:2}
-  #cta p{color:rgba(255,255,255,.82);font-size:1rem;max-width:480px;margin:0 auto 28px;line-height:1.8;position:relative;z-index:2}
-  .cta-btns{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;position:relative;z-index:2}
-  .btn-cta-w{background:#fff;color:var(--green-d);border:none;border-radius:50px;font-family:var(--fh);font-size:1.1rem;padding:14px 40px;box-shadow:0 8px 32px rgba(0,0,0,.2);transition:all .3s;text-decoration:none;display:inline-block}
-  .btn-cta-w:hover{transform:translateY(-4px) scale(1.03);color:var(--green-d)}
-  .btn-cta-outline{background:transparent;border:2.5px solid rgba(255,255,255,.6);color:#fff;border-radius:50px;font-family:var(--fh);font-size:1.1rem;padding:12px 36px;text-decoration:none;display:inline-block;transition:all .3s}
-  .btn-cta-outline:hover{background:rgba(255,255,255,.15);border-color:#fff;color:#fff}
-
   /* FOOTER */
   footer{background:var(--dark);padding:60px 0 28px;color:rgba(255,255,255,.65)}
   .footer-brand{font-family:var(--fh);font-size:1.6rem;color:#fff;margin-bottom:8px;font-weight:800}
@@ -134,14 +120,13 @@
   .footer-bottom{border-top:1px solid rgba(255,255,255,.08);margin-top:40px;padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
   .footer-bottom p{font-size:.82rem;color:rgba(255,255,255,.4);margin:0}
 
-  @media(max-width:991px){.hero-logo-img{width:300px}.hero-logo-wrap::before{width:340px;height:340px}.hero-logo-wrap::after{width:270px;height:270px}}
+  @media(max-width:991px){.hero-logo-img{width:305px}.hero-logo-wrap::before{width:270px;height:270px}.hero-logo-wrap::after{width:270px;height:270px}}
   @media(max-width:767px){
     .hero-logo-wrap{display:none}
     #hero{padding:86px 0 48px;min-height:auto}
-    #contact-cards,#map-section,#social-section,#cta{padding:55px 0}
+    #contact-cards,#map-section,#social-section{padding:55px 0}
     .cc-card{padding:26px 20px}
     .map-wrap{height:240px}
-    .cta-btns{flex-direction:column;align-items:center}
     .footer-bottom{flex-direction:column;text-align:center}
   }
   @media(max-width:480px){
@@ -243,8 +228,8 @@
           We'd Love to <span class="grad-green">Hear</span><br>
           from <span class="grad-yellow">You!</span>
         </h1>
-        <p class="hero-p">Whether you have a question about our flash cards, need help choosing the right learning set, or simply want to share your feedback, we're here for you. Our team is committed to making learning fun, engaging, and meaningful for every child.
-            ✨ We'd love to hear your ideas, answer your questions, and help you make the most of your Infowall journey.</p>
+        <p class="hero-p">Whether you have a question about our flash cards, need help choosing the right learning set, or simply want to share your feedback, we're here for you. Our team is committed to making learning fun, engaging, and meaningful for every child.</p>
+        <p class="hero-highlight">✨ We'd love to hear your ideas, answer your questions, and help you make the most of your <span class="grad-green">Infowall</span> journey. 💚</p>
       </div>
       <div class="col-lg-5 d-flex align-items-center justify-content-center">
         <div class="hero-logo-wrap">
@@ -347,18 +332,6 @@
           <div><div class="soc-name">YouTube</div><div class="soc-handle">InfoWall Learning</div></div>
         </a>
       </div> -->
-    </div>
-  </div>
-</section>
-
-<!-- CTA -->
-<section id="cta">
-  <div class="container position-relative" style="z-index:2">
-    <h2>Ready to Start Learning? 🚀</h2>
-    <p>Join InfoWall for free and give your child the gift of joyful early education.</p>
-    <div class="cta-btns">
-      <a class="btn-cta-w" href="{% url 'register' %}">🌟 Get Started Free</a>
-      <a class="btn-cta-outline" href="{% url 'services' %}">🔍 Our Services</a>
     </div>
   </div>
 </section>

@@ -74,19 +74,15 @@
   .hero-btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--green),var(--green-d));color:#fff;border-radius:50px;font-family:var(--fh);font-size:1rem;padding:13px 30px;text-decoration:none;box-shadow:0 6px 22px rgba(52,199,89,.38);transition:all .3s;animation:fadeDown .6s .28s ease both}
   .hero-btn:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(52,199,89,.5);color:#fff}
   .hero-logo-wrap{display:flex;align-items:center;justify-content:center;min-height:420px;position:relative}
-  .hero-logo-wrap::before{content:'';position:absolute;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(52,199,89,.09) 0%,rgba(255,209,102,.07) 55%,transparent 100%);animation:blobFloat 10s ease-in-out infinite;pointer-events:none}
-  .hero-logo-wrap::after{content:'';position:absolute;width:380px;height:380px;border-radius:50%;border:2px solid rgba(52,199,89,.28);animation:blobFloat 14s ease-in-out infinite reverse;pointer-events:none}
+  .hero-logo-wrap::before{content:'';position:absolute;width:380px;height:380px;border-radius:50%;background:#fff;box-shadow:0 10px 34px rgba(0,0,0,.08);pointer-events:none}
+  .hero-logo-wrap::after{content:'';position:absolute;width:380px;height:380px;border-radius:50%;border:2px solid rgba(52,199,89,.28);pointer-events:none}
   .logo-deco{position:absolute;pointer-events:none;z-index:6}
   .deco-dot-blue{width:14px;height:14px;border-radius:50%;background:var(--blue);top:14%;left:11%;box-shadow:0 2px 8px rgba(79,195,247,.5)}
   .deco-dot-yellow{width:12px;height:12px;border-radius:50%;background:var(--yellow);bottom:17%;right:13%;box-shadow:0 2px 8px rgba(255,209,102,.5)}
   .deco-ring{width:20px;height:20px;border-radius:50%;border:2.5px solid var(--blue);top:47%;right:3%}
   .deco-spark{font-size:1.6rem;line-height:1;color:var(--coral);top:9%;right:15%;transform:rotate(-10deg)}
   .deco-star{font-size:1.3rem;line-height:1;color:var(--coral);bottom:15%;left:5%;transform:rotate(-8deg)}
-  .hero-logo-img{width:420px;max-width:92%;position:relative;z-index:5;animation:logoFloat 6s ease-in-out infinite, logoGlow 2.6s ease-in-out infinite}
-  @keyframes logoGlow{
-    0%,100%{filter:drop-shadow(0 28px 56px rgba(52,199,89,.22)) drop-shadow(0 8px 20px rgba(0,0,0,.09)) drop-shadow(0 0 18px rgba(52,199,89,.35))}
-    50%{filter:drop-shadow(0 28px 56px rgba(52,199,89,.22)) drop-shadow(0 8px 20px rgba(0,0,0,.09)) drop-shadow(0 0 42px rgba(52,199,89,.75))}
-  }
+  .hero-logo-img{width:430px;max-width:105%;position:relative;z-index:5;animation:logoFloat 6s ease-in-out infinite}
   @keyframes logoFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-18px) scale(1.02)}}
 
   /* CORE SERVICES */
@@ -132,17 +128,6 @@
   .sp-list li{font-size:.87rem;color:var(--dark);font-weight:700;display:flex;align-items:center;gap:10px}
   .sp-list li span{width:28px;height:28px;border-radius:10px;background:rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.9rem}
 
-  /* CTA */
-  #cta{background:linear-gradient(135deg,#1A7A3D 0%,#34C759 40%,#1ABC9C 100%);padding:90px 0;text-align:center;position:relative;overflow:hidden}
-  #cta::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.08) 2px,transparent 2px);background-size:32px 32px}
-  #cta h2{font-family:var(--fh);font-size:clamp(1.9rem,4vw,3rem);color:#fff;margin-bottom:12px;position:relative;z-index:2}
-  #cta p{color:rgba(255,255,255,.82);font-size:1rem;max-width:500px;margin:0 auto 28px;line-height:1.8;position:relative;z-index:2}
-  .cta-btns{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;position:relative;z-index:2}
-  .btn-cta-w{background:#fff;color:var(--green-d);border:none;border-radius:50px;font-family:var(--fh);font-size:1.1rem;padding:14px 40px;box-shadow:0 8px 32px rgba(0,0,0,.2);transition:all .3s;text-decoration:none;display:inline-block}
-  .btn-cta-w:hover{transform:translateY(-4px) scale(1.03);color:var(--green-d)}
-  .btn-cta-outline{background:transparent;border:2.5px solid rgba(255,255,255,.6);color:#fff;border-radius:50px;font-family:var(--fh);font-size:1.1rem;padding:12px 36px;text-decoration:none;display:inline-block;transition:all .3s}
-  .btn-cta-outline:hover{background:rgba(255,255,255,.15);border-color:#fff;color:#fff}
-
   /* FOOTER */
   footer{background:var(--dark);padding:60px 0 28px;color:rgba(255,255,255,.65)}
   .footer-brand{font-family:var(--fh);font-size:1.6rem;color:#fff;margin-bottom:8px;font-weight:800}
@@ -156,14 +141,13 @@
   .footer-bottom{border-top:1px solid rgba(255,255,255,.08);margin-top:40px;padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
   .footer-bottom p{font-size:.82rem;color:rgba(255,255,255,.4);margin:0}
 
-  @media(max-width:991px){.hero-logo-img{width:300px}.hero-logo-wrap::before{width:340px;height:340px}.hero-logo-wrap::after{width:270px;height:270px}}
+  @media(max-width:991px){.hero-logo-img{width:305px}.hero-logo-wrap::before{width:270px;height:270px}.hero-logo-wrap::after{width:270px;height:270px}}
   @media(max-width:767px){
     .hero-logo-wrap{display:none}
     #hero{padding:86px 0 48px;min-height:auto}
-    #core-services,#premium,#school-parents,#cta{padding:55px 0}
+    #core-services,#premium,#school-parents{padding:55px 0}
     .sp-card{padding:26px 20px}
     .srv-card{padding:26px 20px}
-    .cta-btns{flex-direction:column;align-items:center}
     .footer-bottom{flex-direction:column;text-align:center}
   }
   @media(max-width:480px){
@@ -438,18 +422,6 @@
           <p>Flash cards in Telugu, Hindi, Tamil, and more — for India's diverse families.</p>
         </div>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA -->
-<section id="cta">
-  <div class="container position-relative" style="z-index:2">
-    <h2>Let's Build Something <span style="color:var(--yellow)">Amazing</span> Together ✨</h2>
-    <p>Whether you're a parent, teacher, or school administrator — InfoWall has something built for you.</p>
-    <div class="cta-btns">
-      <a class="btn-cta-w" href="{% url 'register' %}">🚀 Get Started Free</a>
-      <a class="btn-cta-outline" href="{% url 'contact' %}">📞 Contact Us</a>
     </div>
   </div>
 </section>
