@@ -26,7 +26,7 @@
       --shadow: 0 4px 20px rgba(0,0,0,.08);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: var(--fb); background: var(--bg); color: var(--dark); }
+    body { font-family: var(--fb); background: var(--bg); color: var(--dark); overflow-x: hidden; }
 
     /* ── NAVBAR ── */
     .navbar{background:rgba(255,254,247,.92);backdrop-filter:blur(18px);border-bottom:1px solid rgba(52,199,89,.1);padding:14px 0;position:sticky;top:0;z-index:1000;box-shadow:0 2px 20px rgba(0,0,0,.06)}
@@ -41,7 +41,7 @@
     /* ── PAGE HEADER ── */
     .shop-header {
       background: linear-gradient(135deg, #E8F9ED 0%, #FFF9E6 100%);
-      padding: 36px 0 28px;
+      padding: 56px 0 28px;
       border-bottom: 2px solid rgba(52,199,89,.1);
     }
     .shop-header h1 { font-family: var(--fh); font-size: 2.2rem; color: var(--dark); margin-bottom: 6px; }
@@ -258,10 +258,6 @@
         <li class="nav-item"><a class="nav-link-custom" href="{% url 'services' %}">Services</a></li>
       </ul>
       <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">
-        <a class="btn-nav-cart" href="#" id="navCartBtn">
-          <i class="bi bi-cart2"></i>
-          <span class="cart-badge" id="cartBadge">0</span>
-        </a>
         <a class="btn-nav-cta" href="{% url 'flashcards' %}">🃏 Try for Free</a>
       </div>
     </div>

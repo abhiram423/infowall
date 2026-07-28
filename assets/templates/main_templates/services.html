@@ -61,7 +61,7 @@
   }
 
   /* HERO */
-  #hero{background:linear-gradient(160deg,#F0FBF1 0%,#FFFEF7 45%,#FFF3E0 100%);padding:70px 0 60px;position:relative;overflow:hidden;min-height:100vh;display:flex;align-items:center}
+  #hero{background:linear-gradient(160deg,#F0FBF1 0%,#FFFEF7 45%,#FFF3E0 100%);padding:96px 0 60px;position:relative;overflow:hidden;min-height:100vh;display:flex;align-items:center}
   #hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(52,199,89,.12) 1.5px,transparent 1.5px);background-size:30px 30px;pointer-events:none}
   .hero-blob{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;animation:blobFloat 12s ease-in-out infinite}
   .hb1{width:500px;height:500px;background:rgba(52,199,89,.10);top:-120px;left:-100px}
@@ -149,7 +149,7 @@
   @media(max-width:991px){.hero-logo-img{width:300px}.hero-logo-wrap::before{width:340px;height:340px}.hero-logo-wrap::after{width:270px;height:270px}}
   @media(max-width:767px){
     .hero-logo-wrap{display:none}
-    #hero{padding:70px 0 48px;min-height:auto}
+    #hero{padding:86px 0 48px;min-height:auto}
     #core-services,#premium,#school-parents,#cta{padding:55px 0}
     .sp-card{padding:26px 20px}
     .srv-card{padding:26px 20px}
@@ -183,10 +183,6 @@
         <li class="nav-item"><a class="nav-link-custom nav-link-active" href="{% url 'services' %}">Services</a></li>
       </ul>
       <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">
-        <a class="btn-nav-cart" href="#">
-          <i class="bi bi-cart2"></i>
-          <span class="cart-badge">0</span>
-        </a>
         <a class="btn-nav-cta" href="{% url 'flashcards' %}">🃏 Try for Free</a>
       </div>
     </div>

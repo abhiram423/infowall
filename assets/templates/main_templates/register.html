@@ -55,7 +55,7 @@
     .nav-link-custom:hover { background: var(--green-l); color: var(--green-d); }
 
     /* ═══ REGISTRATION SECTION ═══ */
-    #registration { padding: 80px 0; min-height: 90vh; position: relative; }
+    #registration { padding: 100px 0 80px; min-height: 90vh; position: relative; }
     .reg-card {
       background: #fff; border-radius: 40px; overflow: hidden;
       box-shadow: var(--sh-lg); border: 1.5px solid var(--border);
@@ -155,10 +155,6 @@
       </ul>
     </div>
     <div class="d-flex align-items-center gap-2">
-      <a class="btn-nav-cart" href="#">
-        <i class="bi bi-cart2"></i>
-        <span class="cart-badge">0</span>
-      </a>
       <a class="btn-nav-login-special" href="{% url 'login' %}">
         <i class="bi bi-box-arrow-in-right"></i>Login Here
       </a>

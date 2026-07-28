@@ -187,6 +187,7 @@
       color: #fff; padding: 11px 24px;
       display: flex; align-items: center; justify-content: center;
       gap: 14px; flex-wrap: wrap; position: relative; z-index: 9;
+      margin-top: 18px;
       animation: bannerSlide 0.6s ease both;
     }
     @keyframes bannerSlide { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:none; } }
@@ -577,10 +578,6 @@
       <li class="nav-item"><a class="nav-link-fc" href="{% url 'services' %}">Support</a></li>
     </ul>
     <div class="nav-btns d-flex align-items-center gap-2">
-      <a class="btn-nav-cart" href="#">
-        <i class="bi bi-cart2"></i>
-        <span class="cart-badge">0</span>
-      </a>
       <button class="btn-nav solid" onclick="toggleAuthDrawer()">📝 Register</button>
     </div>
   </div>
@@ -1006,10 +1003,16 @@ function shuffle(arr) {
   return arr;
 }
 
-/* ── Load category from URL parameter ── */
+/* ── Load category / mode from URL parameters ── */
 (function() {
-  const cat = new URLSearchParams(window.location.search).get('cat');
+  const params = new URLSearchParams(window.location.search);
+  const cat  = params.get('cat');
+  const mode = params.get('mode');
   if (cat && DATA[cat]) setCategory(cat);
+  if (mode === 'quiz') {
+    setMode('quiz');
+    document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
